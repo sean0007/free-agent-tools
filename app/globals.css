@@ -1,0 +1,20 @@
+:root { --bg: #0d0f12; --card: #15181d; --line: #262a31; --fg: #e9ecef; --muted: #9aa3ad; --accent: #7cc4ff; }
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+a { color: var(--accent); }
+main { max-width: 860px; margin: 0 auto; padding: 40px 20px 80px; }
+h1 { font-size: clamp(2rem, 5vw, 3rem); line-height: 1.1; margin: 8px 0 12px; letter-spacing: -0.02em; }
+h2 { margin-top: 48px; font-size: 1.4rem; }
+h3 { margin: 0 0 4px; font-size: 1.05rem; }
+.kicker { font: 600 12px/1 ui-monospace, monospace; letter-spacing: .2em; text-transform: uppercase; color: var(--accent); }
+.muted { color: var(--muted); }
+.lead { font-size: 1.15rem; color: var(--muted); }
+pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; }
+pre { background: #0a0c0f; border: 1px solid var(--line); border-radius: 12px; padding: 14px; overflow-x: auto; margin: 8px 0 0; }
+.url { font-size: 1.05rem; padding: 16px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; margin-top: 14px; }
+.grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-top: 14px; }
+.tool { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+.tool code { color: var(--accent); }
+.small { font-size: 14px; }
+footer { margin-top: 64px; border-top: 1px solid var(--line); padding-top: 20px; font-size: 14px; color: var(--muted); }
