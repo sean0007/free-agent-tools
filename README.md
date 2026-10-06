@@ -2,8 +2,8 @@
 
 <!-- mcp-name: io.github.sean0007/free-agent-tools -->
 
-A free, no-auth **remote MCP server** (streamable HTTP) with 16 small, deterministic tools your AI agent can call:
-business idea scoring, price headroom, hotel OTA commission, open-source swaps for SaaS bills,
+A free, no-auth **remote MCP server** (streamable HTTP) with 17 small, deterministic tools your AI agent can call:
+startup pitch roasting, business idea scoring, price headroom, hotel OTA commission, open-source swaps for SaaS bills,
 Google Ads / Meta Ads notice risk, App Store 4.2 / 4.3 precheck, faceless YouTube reality check,
 AI infrastructure bottlenecks, viral attention patterns, and Japan trip planning.
 
@@ -53,6 +53,7 @@ claude mcp add --transport http free-agent-tools https://free-agent-tools.vercel
 
 | Tool | What it does |
 |---|---|
+| `roast_pitch` | Roast a startup pitch (five judges, one verdict, one change) |
 | `score_business_idea_moat` | Score a business idea (MOAT: fund, fix, or flee) |
 | `price_headroom_check` | Price headroom from close rate |
 | `thirty_day_cash_check` | Do customers fund growth? (30-day cash) |
@@ -86,6 +87,7 @@ Every tool is also a free JSON API (GET or POST, CORS open, OpenAPI 3.1, `/.well
 | [Faceless YT Reality Check](https://faceless-yt-risk-check.vercel.app) | https://faceless-yt-risk-check.vercel.app/openapi.json |
 | [AI Bottleneck Map](https://ai-bottleneck-map.vercel.app) | https://ai-bottleneck-map.vercel.app/openapi.json |
 | [Viral Attention Map](https://viral-attention-map.vercel.app) | https://viral-attention-map.vercel.app/openapi.json |
+| [Pitch Roast](https://pitch-roast.vercel.app) | https://pitch-roast.vercel.app/openapi.json |
 | [Japan Trip Brain](https://japan-trip-brain.vercel.app) | https://japan-trip-brain.vercel.app/openapi.json |
 
 ## Test it

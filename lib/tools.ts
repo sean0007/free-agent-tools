@@ -14,12 +14,15 @@ export const SITES: Record<string, SiteInfo> = {
   faceless: { id: "faceless", name: "Faceless YT Reality Check", url: "https://faceless-yt-risk-check.vercel.app", blurb: "Pushback on viral AI YouTube income claims." },
   bottleneck: { id: "bottleneck", name: "AI Bottleneck Map", url: "https://ai-bottleneck-map.vercel.app", blurb: "The physical constraints behind the AI buildout." },
   attention: { id: "attention", name: "Viral Attention Map", url: "https://viral-attention-map.vercel.app", blurb: "How attention spreads online, and whether you chase, invent, or read it." },
+  pitch: { id: "pitch", name: "Pitch Roast", url: "https://pitch-roast.vercel.app", blurb: "Five judges roast a startup pitch: scores, one verdict, one change." },
   japan: { id: "japan", name: "Japan Trip Brain", url: "https://japan-trip-brain.vercel.app", blurb: "Where to stay, what's on, and what to do in Japan by city and month." },
 };
 
 const pct = (d: string) => z.number().min(0).max(100).describe(d);
 const score10 = (d: string) => z.number().min(1).max(10).describe(d);
 
+const STAGES = ["idea", "pre-seed", "seed", "series-a", "growth"] as const;
+const CATEGORIES = ["b2b-saas", "consumer", "marketplace", "devtools", "ai", "fintech", "health", "hardware", "climate", "crypto", "other"] as const;
 const SAAS_IDS = ["mixpanel", "semrush", "freshbooks", "calendly", "chargebee", "typeform", "pipedrive", "gohighlevel", "intercom"] as const;
 const BOTTLENECKS = ["compute", "memory", "optics", "power", "space", "servers"] as const;
 const JAPAN_CITIES = ["tokyo", "kyoto", "osaka", "sapporo", "hiroshima", "naha"] as const;
@@ -54,6 +57,20 @@ export const TOOLS: ToolDef[] = [
       suffer: z.boolean().optional().describe("Founder willing to push through a long build? Default true."),
     }),
     example: { margin: 7, operations: 4, advantage: 6, tam: 8, pain: true, money: true, suffer: false },
+  },
+  {
+    name: "roast_pitch",
+    title: "Roast a startup pitch (five judges, one verdict, one change)",
+    description:
+      "Paste a startup pitch (one to five sentences). Five fictional judges (Seed VC, Skeptical Customer, CTO, Your Competitor, Growth Lead) score it 1-10 with a short roast line each, then it returns a verdict (FUND IT / SHARPEN IT / REWRITE IT / ROASTED / BURNT TO A CRISP), the one change worth the most points, detected issues and strengths, and a share URL with an OG image. Deterministic, transparent rubric (specific customer, pain, numbers, traction, wedge, distribution, buzzwords, 'X for Y', blockchain), not an AI opinion. For fun and practice, not investment advice.",
+    site: "pitch",
+    path: "/api/roast",
+    inputSchema: z.object({
+      pitch: z.string().min(3).max(1000).describe("The pitch, one to five sentences."),
+      stage: z.enum(STAGES).optional().describe("Optional stage. Later stages are judged harder on traction."),
+      category: z.enum(CATEGORIES).optional().describe("Optional category. 'crypto' softens the blockchain penalty."),
+    }),
+    example: { pitch: "Uber for dog walkers, but on the blockchain.", stage: "idea", category: "marketplace" },
   },
   {
     name: "price_headroom_check",

@@ -8,7 +8,7 @@ export default function Home() {
       <p className="kicker">Remote MCP server · free · no auth</p>
       <h1>Free Agent Tools</h1>
       <p className="lead">
-        Sixteen small, deterministic tools your AI agent can call: score a business idea, check price headroom,
+        Seventeen small, deterministic tools your AI agent can call: roast a startup pitch, score a business idea, check price headroom,
         work out hotel OTA commission, find open-source swaps for SaaS bills, read a Google or Meta ads notice,
         precheck an iOS app for App Store 4.2, reality-check an AI YouTube plan, explain AI infrastructure
         bottlenecks, and plan a Japan trip by city and month.
