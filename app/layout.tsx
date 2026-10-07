@@ -9,8 +9,9 @@ export const metadata: Metadata = {
   metadataBase: new URL(SERVER_URL),
   title: "Free Agent Tools: a free, no-auth remote MCP server",
   description,
-  alternates: { canonical: "/" },
-  openGraph: { title: "Free Agent Tools MCP server", description, url: SERVER_URL, type: "website" },
+  alternates: { canonical: `${SERVER_URL}/` },
+  openGraph: { title: "Free Agent Tools MCP server", description, url: SERVER_URL, type: "website", siteName: "Free Agent Tools" },
+  twitter: { card: "summary_large_image", title: "Free Agent Tools MCP server", description, images: ["/opengraph-image"] },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

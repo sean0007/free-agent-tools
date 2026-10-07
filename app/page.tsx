@@ -1,5 +1,72 @@
 import { CLIENTS } from "@/lib/clients";
-import { MCP_URL, SITES, TOOLS } from "@/lib/tools";
+import { MCP_URL, SERVER_URL, SITES, TOOLS } from "@/lib/tools";
+
+const how = (name: string) => CLIENTS.find((c) => c.name === name);
+const cursor = how("Cursor");
+const claudeApp = how("Claude (desktop and web)");
+const claudeCode = how("Claude Code");
+const chatgpt = how("ChatGPT");
+
+const FAQ: { q: string; a: string }[] = [
+  {
+    q: "Is there a free MCP server with business calculators?",
+    a: `Yes. Free Agent Tools is a free remote MCP server at ${MCP_URL} with ${TOOLS.length} deterministic tools: a startup pitch roast, a business idea (MOAT) score, price headroom, 30-day cash and email-list value checks, a hotel OTA commission calculator, SaaS-to-open-source savings, a Google / Meta ads notice risk card, an App Store 4.2 precheck, a faceless YouTube reality check, AI infrastructure bottlenecks, viral attention patterns, and Japan trip planning.`,
+  },
+  {
+    q: `What are the ${TOOLS.length} tools?`,
+    a: TOOLS.map((t) => `${t.name} (${t.title})`).join("; ") + ".",
+  },
+  {
+    q: "How do I add it to Claude?",
+    a: `In Claude desktop or claude.ai: ${claudeApp?.how ?? ""} URL: ${MCP_URL}. In Claude Code, run: ${claudeCode?.code ?? ""}`,
+  },
+  {
+    q: "How do I add it to Cursor?",
+    a: `${cursor?.how ?? ""} ${cursor?.code.replace(/\s+/g, " ") ?? ""}`,
+  },
+  {
+    q: "Can I use it in ChatGPT?",
+    a: `Yes, as a custom connector. ${chatgpt?.how ?? ""} URL: ${MCP_URL}. It also works with the OpenAI Responses API as a remote MCP tool, and every tool has a plain JSON API with an OpenAPI spec you can use as a GPT Action.`,
+  },
+  {
+    q: "Is it really free? Do I need an API key?",
+    a: "Yes, it is free. There is no API key, no account, and no sign-in: choose No authentication in clients that ask. It speaks streamable HTTP; clients that only support stdio can bridge with mcp-remote.",
+  },
+  {
+    q: "What happens to the data my agent sends?",
+    a: "Each call's arguments are sent to the matching tool's public JSON API on vercel.app, which computes the result and returns it. The tools do not track tool inputs, and there are no accounts. Don't send passwords, keys, or personal data you would not paste into a public web form.",
+  },
+  {
+    q: "Are the results financial, legal, or investment advice?",
+    a: "No. The tools are deterministic rules of thumb and educational estimates. Every result carries a disclaimer field for the agent to pass on to the user, and links the free website where a person can check the math.",
+  },
+  {
+    q: "Is it open source, and where is it listed?",
+    a: `Yes, MIT-licensed at github.com/sean0007/free-agent-tools. It is published in the Official MCP Registry as io.github.sean0007/free-agent-tools, and server.json and llms.txt are at ${SERVER_URL}/server.json and ${SERVER_URL}/llms.txt.`,
+  },
+];
+
+const JSON_LD = [
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: "Free Agent Tools",
+    url: `${SERVER_URL}/`,
+    applicationCategory: "DeveloperApplication",
+    operatingSystem: "Any (remote MCP server, streamable HTTP)",
+    isAccessibleForFree: true,
+    offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+    license: "https://opensource.org/licenses/MIT",
+    codeRepository: "https://github.com/sean0007/free-agent-tools",
+    description: `A free, no-auth remote MCP server (${MCP_URL}) with ${TOOLS.length} deterministic tools for founders, small businesses, creators, developers, and travelers.`,
+    featureList: TOOLS.map((t) => t.title),
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: FAQ.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+  },
+];
 
 export default function Home() {
   const sites = Object.values(SITES);
@@ -55,6 +122,24 @@ export default function Home() {
         </div>
       ))}
 
+      <h2>Questions</h2>
+      {FAQ.map((f, i) => (
+        <details key={f.q} open={i < 3}>
+          <summary>{f.q}</summary>
+          {i === 1 ? (
+            <ul className="small">
+              {TOOLS.map((t) => (
+                <li key={t.name}>
+                  <code>{t.name}</code>: {t.title}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="small">{f.a}</p>
+          )}
+        </details>
+      ))}
+
       <h2>Test it</h2>
       <pre>{`npx @modelcontextprotocol/inspector --cli ${MCP_URL} --transport http --method tools/list`}</pre>
 
@@ -64,6 +149,7 @@ export default function Home() {
         <br />
         Not affiliated with Anthropic, OpenAI, Google, Meta, Apple, or any company named in tool results.
       </footer>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD).replace(/</g, "\\u003c") }} />
     </main>
   );
 }

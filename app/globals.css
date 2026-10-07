@@ -18,3 +18,7 @@ pre { background: #0a0c0f; border: 1px solid var(--line); border-radius: 12px; p
 .tool code { color: var(--accent); }
 .small { font-size: 14px; }
 footer { margin-top: 64px; border-top: 1px solid var(--line); padding-top: 20px; font-size: 14px; color: var(--muted); }
+details { border-top: 1px solid var(--line); padding: 12px 0; }
+details:last-of-type { border-bottom: 1px solid var(--line); }
+summary { cursor: pointer; font-weight: 600; }
+details p, details ul { color: var(--muted); margin: 8px 0 0; }
