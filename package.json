@@ -1,8 +1,8 @@
 {
   "name": "free-agent-tools",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
-  "description": "Remote MCP server (streamable HTTP, no auth) with free deterministic tools: startup pitch roast, business idea scoring, pricing, hotel OTA commission, SaaS self-host savings, ads notice risk, App Store 4.2 precheck, faceless YouTube reality check, AI bottlenecks, viral attention patterns, Japan trip planning.",
+  "description": "Remote MCP server (streamable HTTP, no auth) with free deterministic tools: startup pitch roast, business idea scoring, pricing, hotel OTA commission, SaaS self-host savings, ads notice risk, App Store 4.2 precheck, faceless YouTube reality check, AI bottlenecks, viral attention patterns, Japan trip planning, Japan tax-free refund check.",
   "license": "MIT",
   "scripts": {
     "dev": "next dev",

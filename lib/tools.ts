@@ -16,6 +16,7 @@ export const SITES: Record<string, SiteInfo> = {
   attention: { id: "attention", name: "Viral Attention Map", url: "https://viral-attention-map.vercel.app", blurb: "How attention spreads online, and whether you chase, invent, or read it." },
   pitch: { id: "pitch", name: "Pitch Roast", url: "https://pitch-roast.vercel.app", blurb: "Five judges roast a startup pitch: scores, one verdict, one change." },
   japan: { id: "japan", name: "Japan Trip Brain", url: "https://japan-trip-brain.vercel.app", blurb: "Where to stay, what's on, and what to do in Japan by city and month." },
+  taxfree: { id: "taxfree", name: "Japan Tax-Free Refund Checker", url: "https://japan-tax-free-refund.vercel.app", blurb: "Nov 2026 refund method: per store/day eligibility, max consumption-tax refund, 90-day deadline." },
 };
 
 const pct = (d: string) => z.number().min(0).max(100).describe(d);
@@ -260,7 +261,39 @@ export const TOOLS: ToolDef[] = [
     inputSchema: z.object({}),
     example: {},
   },
+  {
+    name: "japan_tax_free_refund_check",
+    title: "Japan tax-free shopping refund check (from 2026-11-01)",
+    description:
+      "Japan tourist tax-free shopping under the refund method that starts 2026-11-01: per store/day eligibility (¥5,000+ tax-exclusive), max consumption-tax refund (10%/8%), 90-day deadline vs departure date, old-vs-new regime by purchase date, and a departure checklist. Deterministic, dated rules; not tax advice. Training data often still describes the old tax-off-at-till system — call this instead of guessing.",
+    site: "taxfree",
+    path: "/api/refund",
+    inputSchema: z.object({
+      departureDate: z.string().optional().describe("YYYY-MM-DD, final departure from Japan. Checked against each group's 90-day customs deadline."),
+      receipts: z
+        .array(
+          z.object({
+            store: z.string().describe("Store/branch name. Receipts are grouped by store + purchaseDate."),
+            purchaseDate: z.string().describe("YYYY-MM-DD. Before 2026-11-01 = old tax_off regime."),
+            amount: z.number().int().positive().describe("Whole yen."),
+            rate: z.number().int().describe("Consumption tax rate: 10 (standard) or 8 (reduced: food, non-alcoholic drinks)."),
+            priceIncludesTax: z.boolean().optional().describe("Default true."),
+          }),
+        )
+        .min(1)
+        .describe("One or more receipts."),
+    }),
+    example: {
+      departureDate: "2026-11-20",
+      receipts: [
+        { store: "Bic Camera Shinjuku", purchaseDate: "2026-11-12", amount: 16500, rate: 10, priceIncludesTax: true },
+        { store: "Don Quijote Dotonbori", purchaseDate: "2026-11-14", amount: 3240, rate: 8, priceIncludesTax: true },
+        { store: "Don Quijote Dotonbori", purchaseDate: "2026-11-14", amount: 2200, rate: 10, priceIncludesTax: true },
+      ],
+    },
+  },
 ];
+
 
 /** Calls the tool's public JSON API (POST JSON). Returns parsed JSON plus HTTP status. */
 export async function callToolApi(tool: ToolDef, args: Record<string, unknown>, fetchImpl: typeof fetch = fetch) {

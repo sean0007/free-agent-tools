@@ -2,10 +2,10 @@
 
 <!-- mcp-name: io.github.sean0007/free-agent-tools -->
 
-A free, no-auth **remote MCP server** (streamable HTTP) with 17 small, deterministic tools your AI agent can call:
+A free, no-auth **remote MCP server** (streamable HTTP) with 18 small, deterministic tools your AI agent can call:
 startup pitch roasting, business idea scoring, price headroom, hotel OTA commission, open-source swaps for SaaS bills,
 Google Ads / Meta Ads notice risk, App Store 4.2 / 4.3 precheck, faceless YouTube reality check,
-AI infrastructure bottlenecks, viral attention patterns, and Japan trip planning.
+AI infrastructure bottlenecks, viral attention patterns, Japan trip planning, and Japan tax-free refund checking.
 
 **Endpoint:** `https://free-agent-tools.vercel.app/mcp`  
 **Landing page with setup for every client:** https://free-agent-tools.vercel.app

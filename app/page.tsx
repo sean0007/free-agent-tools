@@ -10,7 +10,7 @@ const chatgpt = how("ChatGPT");
 const FAQ: { q: string; a: string }[] = [
   {
     q: "Is there a free MCP server with business calculators?",
-    a: `Yes. Free Agent Tools is a free remote MCP server at ${MCP_URL} with ${TOOLS.length} deterministic tools: a startup pitch roast, a business idea (MOAT) score, price headroom, 30-day cash and email-list value checks, a hotel OTA commission calculator, SaaS-to-open-source savings, a Google / Meta ads notice risk card, an App Store 4.2 precheck, a faceless YouTube reality check, AI infrastructure bottlenecks, viral attention patterns, and Japan trip planning.`,
+    a: `Yes. Free Agent Tools is a free remote MCP server at ${MCP_URL} with ${TOOLS.length} deterministic tools: a startup pitch roast, a business idea (MOAT) score, price headroom, 30-day cash and email-list value checks, a hotel OTA commission calculator, SaaS-to-open-source savings, a Google / Meta ads notice risk card, an App Store 4.2 precheck, a faceless YouTube reality check, AI infrastructure bottlenecks, viral attention patterns, Japan trip planning, and Japan tax-free refund checking.`,
   },
   {
     q: `What are the ${TOOLS.length} tools?`,
@@ -75,10 +75,10 @@ export default function Home() {
       <p className="kicker">Remote MCP server · free · no auth</p>
       <h1>Free Agent Tools</h1>
       <p className="lead">
-        Seventeen small, deterministic tools your AI agent can call: roast a startup pitch, score a business idea, check price headroom,
+        Eighteen small, deterministic tools your AI agent can call: roast a startup pitch, score a business idea, check price headroom,
         work out hotel OTA commission, find open-source swaps for SaaS bills, read a Google or Meta ads notice,
         precheck an iOS app for App Store 4.2, reality-check an AI YouTube plan, explain AI infrastructure
-        bottlenecks, and plan a Japan trip by city and month.
+        bottlenecks, plan a Japan trip by city and month, and check a Japan tax-free shopping refund.
       </p>
       <p>Add this URL to any MCP client that supports streamable HTTP:</p>
       <pre className="url">{MCP_URL}</pre>
