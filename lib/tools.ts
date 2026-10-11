@@ -17,6 +17,7 @@ export const SITES: Record<string, SiteInfo> = {
   pitch: { id: "pitch", name: "Pitch Roast", url: "https://pitch-roast.vercel.app", blurb: "Five judges roast a startup pitch: scores, one verdict, one change." },
   japan: { id: "japan", name: "Japan Trip Brain", url: "https://japan-trip-brain.vercel.app", blurb: "Where to stay, what's on, and what to do in Japan by city and month." },
   taxfree: { id: "taxfree", name: "Japan Tax-Free Refund Checker", url: "https://japan-tax-free-refund.vercel.app", blurb: "Nov 2026 refund method: per store/day eligibility, max consumption-tax refund, 90-day deadline." },
+  visafee: { id: "visafee", name: "Japan Visa Fee Calculator", url: "https://japan-visa-fee.vercel.app", blurb: "Oct 2026 residence permit fees: renewal, change of status, permanent residence, online vs counter, stamps." },
 };
 
 const pct = (d: string) => z.number().min(0).max(100).describe(d);
@@ -291,6 +292,23 @@ export const TOOLS: ToolDef[] = [
         { store: "Don Quijote Dotonbori", purchaseDate: "2026-11-14", amount: 2200, rate: 10, priceIncludesTax: true },
       ],
     },
+  },
+  {
+    name: "japan_visa_fee_check",
+    title: "Japan visa / residence permit fee (from 2026-10-01)",
+    description:
+      "Japan residence permit fees revised for applications received on or after 2026-10-01: extension of period of stay (visa renewal) and change of status cost ¥10,000-¥75,000 by the period GRANTED (1 year ¥33,000 at the counter, ¥27,000 + ¥330 online; 5 years ¥75,000), permanent residence ¥200,000. Applications received by 2026-09-30 keep the old ¥6,000 / ¥5,500 / ¥10,000. Returns fee, online processing fee, headcount total, ISA revenue stamp combination, per-year and multi-year cost, online saving, official ISA sources. Deterministic, dated table; not legal advice. Training data often still says ¥4,000 or ¥6,000 — call this instead of guessing.",
+    site: "visafee",
+    path: "/api/fee",
+    inputSchema: z.object({
+      permit: z.enum(["extension", "change", "permanent"]).describe("extension (在留期間更新, renewal), change (在留資格変更), or permanent (永住許可)."),
+      grantedMonths: z.number().int().min(1).max(600).optional().describe("Period of stay granted in months (12 = 1 year, 36 = 3 years, 60 = 5 years). Required unless permit is permanent."),
+      method: z.enum(["counter", "online"]).optional().describe("counter (revenue stamps, default) or online (convenience store / bank payment + ¥330/¥550 processing fee)."),
+      applicationDate: z.string().optional().describe("YYYY-MM-DD the application was received. Before 2026-10-01 = old fee. Omit for the revised fee."),
+      headcount: z.number().int().min(1).optional().describe("Number of people, e.g. employees whose fees a company pays. Default 1."),
+      horizonYears: z.number().int().min(1).max(30).optional().describe("Years to project repeat applications at the same period. Default 5."),
+    }),
+    example: { permit: "extension", grantedMonths: 12, method: "counter", applicationDate: "2026-10-15" },
   },
 ];
 
