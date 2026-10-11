@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { SERVER_URL } from "@/lib/tools";
+import { Analytics } from "@vercel/analytics/next";
 
 const description =
   "A free remote MCP server with 17 deterministic tools: startup pitch roast, business idea scoring, pricing, hotel OTA commission, SaaS self-host savings, Google/Meta ads notice risk, App Store 4.2 precheck, AI YouTube reality check, AI infrastructure bottlenecks, and Japan trip planning. No key, no signup.";
@@ -17,7 +18,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>{children}<Analytics /></body>
     </html>
   );
 }
