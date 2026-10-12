@@ -2,10 +2,10 @@
 
 <!-- mcp-name: io.github.sean0007/free-agent-tools -->
 
-A free, no-auth **remote MCP server** (streamable HTTP) with 19 small, deterministic tools your AI agent can call:
+A free, no-auth **remote MCP server** (streamable HTTP) with 20 small, deterministic tools your AI agent can call:
 startup pitch roasting, business idea scoring, price headroom, hotel OTA commission, open-source swaps for SaaS bills,
 Google Ads / Meta Ads notice risk, App Store 4.2 / 4.3 precheck, faceless YouTube reality check,
-AI infrastructure bottlenecks, viral attention patterns, Japan trip planning, Japan tax-free refund checking, and Japan visa / residence permit fees.
+AI infrastructure bottlenecks, viral attention patterns, Japan trip planning, Japan tax-free refund checking, Japan visa / residence permit fees, and Japan luggage rules / forwarding cost.
 
 **Endpoint:** `https://free-agent-tools.vercel.app/mcp`  
 **Landing page with setup for every client:** https://free-agent-tools.vercel.app
@@ -72,6 +72,7 @@ claude mcp add --transport http free-agent-tools https://free-agent-tools.vercel
 | `japan_trip_options` | Japan Trip Brain: supported cities, months, travelers |
 | `japan_tax_free_refund_check` | Japan tax-free shopping refund check (from 2026-11-01) |
 | `japan_visa_fee_check` | Japan visa / residence permit fee (from 2026-10-01) |
+| `japan_luggage_check` | Japan suitcase check: Shinkansen oversized-baggage rule + Yamato forwarding cost |
 
 All tools are read-only and idempotent.
 
@@ -93,6 +94,7 @@ Every tool is also a free JSON API (GET or POST, CORS open, OpenAPI 3.1, `/.well
 | [Japan Trip Brain](https://japan-trip-brain.vercel.app) | https://japan-trip-brain.vercel.app/openapi.json |
 | [Japan Tax-Free Refund Checker](https://japan-tax-free-refund.vercel.app) | https://japan-tax-free-refund.vercel.app/openapi.json |
 | [Japan Visa Fee Calculator](https://japan-visa-fee.vercel.app) | https://japan-visa-fee.vercel.app/openapi.json |
+| [Japan Luggage Check](https://japan-luggage.vercel.app) | https://japan-luggage.vercel.app/openapi.json |
 
 ## Test it
 

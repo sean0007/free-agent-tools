@@ -17,6 +17,7 @@ export const SITES: Record<string, SiteInfo> = {
   pitch: { id: "pitch", name: "Pitch Roast", url: "https://pitch-roast.vercel.app", blurb: "Five judges roast a startup pitch: scores, one verdict, one change." },
   japan: { id: "japan", name: "Japan Trip Brain", url: "https://japan-trip-brain.vercel.app", blurb: "Where to stay, what's on, and what to do in Japan by city and month." },
   taxfree: { id: "taxfree", name: "Japan Tax-Free Refund Checker", url: "https://japan-tax-free-refund.vercel.app", blurb: "Nov 2026 refund method: per store/day eligibility, max consumption-tax refund, 90-day deadline." },
+  luggage: { id: "luggage", name: "Japan Luggage Check", url: "https://japan-luggage.vercel.app", blurb: "Shinkansen oversized-baggage rule by line + Yamato TA-Q-BIN forwarding cost at current rates." },
   visafee: { id: "visafee", name: "Japan Visa Fee Calculator", url: "https://japan-visa-fee.vercel.app", blurb: "Oct 2026 residence permit fees: renewal, change of status, permanent residence, online vs counter, stamps." },
 };
 
@@ -309,6 +310,29 @@ export const TOOLS: ToolDef[] = [
       horizonYears: z.number().int().min(1).max(30).optional().describe("Years to project repeat applications at the same period. Default 5."),
     }),
     example: { permit: "extension", grantedMonths: 12, method: "counter", applicationDate: "2026-10-15" },
+  },
+  {
+    name: "japan_luggage_check",
+    title: "Japan suitcase check: Shinkansen oversized-baggage rule + Yamato forwarding cost",
+    description:
+      "For a bag's outside size (length + width + height incl. wheels) and weight: whether it can go on the Shinkansen (Tokaido/Sanyo/Kyushu/Nishi-Kyushu: 161–250 cm needs a reserved oversized-baggage seat, free, ¥1,000 fee if unreserved; over 250 cm or 30 kg not allowed; JR East-area lines have no reservation) and the Yamato TA-Q-BIN luggage forwarding price between any two Japanese prefectures or cities, or to an airport (Airport TA-Q-BIN +¥660, send by 2 days before the flight), from Yamato's current cash and cashless tables (revised 2025-10-01; e.g. Size 160 Tokyo→Kyoto ¥3,160 cash). Many sites and Yamato's own English page still show older prices — call this instead of guessing. Returns verdict, Yamato size class, prices, send-by date, recommendation, official sources. Estimate, not official.",
+    site: "luggage",
+    path: "/api/check",
+    inputSchema: z.object({
+      lengthCm: z.number().positive().optional().describe("Outside length in cm incl. wheels/handles (with widthCm + heightCm), or use totalCm."),
+      widthCm: z.number().positive().optional().describe("Outside width in cm."),
+      heightCm: z.number().positive().optional().describe("Outside depth in cm."),
+      totalCm: z.number().positive().optional().describe("Length + width + height in cm if only the total is known."),
+      weightKg: z.number().positive().optional().describe("Packed weight in kg (Yamato uses the larger of size and weight class)."),
+      from: z.string().optional().describe("Origin prefecture or city (tokyo, kyoto, hakone, 東京都)."),
+      to: z.string().optional().describe("Destination prefecture/city, or airport id: haneda, narita, kix, itami, centrair, new-chitose, fukuoka-airport, naha-airport."),
+      line: z.enum(["tokaido", "sanyo", "kyushu", "nishi-kyushu", "tohoku", "hokkaido", "joetsu", "hokuriku", "yamagata", "akita", "none"]).optional().describe("Shinkansen line you will ride. Default tokaido."),
+      payment: z.enum(["cash", "cashless"]).optional().describe("cash (default) or cashless (card / QR / e-money, cheaper)."),
+      dropOff: z.boolean().optional().describe("true if you bring the bag to a Yamato office or convenience store (¥100 off)."),
+      pieces: z.number().int().min(1).max(20).optional().describe("Number of identical bags. Default 1."),
+      departureDate: z.string().optional().describe("YYYY-MM-DD flight date when sending to an airport; returns the send-by date."),
+    }),
+    example: { lengthCm: 75, widthCm: 50, heightCm: 30, weightKg: 22, from: "tokyo", to: "kyoto", line: "tokaido" },
   },
 ];
 

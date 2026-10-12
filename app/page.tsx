@@ -10,7 +10,7 @@ const chatgpt = how("ChatGPT");
 const FAQ: { q: string; a: string }[] = [
   {
     q: "Is there a free MCP server with business calculators?",
-    a: `Yes. Free Agent Tools is a free remote MCP server at ${MCP_URL} with ${TOOLS.length} deterministic tools: a startup pitch roast, a business idea (MOAT) score, price headroom, 30-day cash and email-list value checks, a hotel OTA commission calculator, SaaS-to-open-source savings, a Google / Meta ads notice risk card, an App Store 4.2 precheck, a faceless YouTube reality check, AI infrastructure bottlenecks, viral attention patterns, Japan trip planning, Japan tax-free refund checking, and Japan visa / residence permit fees.`,
+    a: `Yes. Free Agent Tools is a free remote MCP server at ${MCP_URL} with ${TOOLS.length} deterministic tools: a startup pitch roast, a business idea (MOAT) score, price headroom, 30-day cash and email-list value checks, a hotel OTA commission calculator, SaaS-to-open-source savings, a Google / Meta ads notice risk card, an App Store 4.2 precheck, a faceless YouTube reality check, AI infrastructure bottlenecks, viral attention patterns, Japan trip planning, Japan tax-free refund checking, Japan visa / residence permit fees, and a Japan luggage (Shinkansen suitcase rule + Yamato forwarding cost) check.`,
   },
   {
     q: `What are the ${TOOLS.length} tools?`,
@@ -75,10 +75,10 @@ export default function Home() {
       <p className="kicker">Remote MCP server · free · no auth</p>
       <h1>Free Agent Tools</h1>
       <p className="lead">
-        Nineteen small, deterministic tools your AI agent can call: roast a startup pitch, score a business idea, check price headroom,
+        Twenty small, deterministic tools your AI agent can call: roast a startup pitch, score a business idea, check price headroom,
         work out hotel OTA commission, find open-source swaps for SaaS bills, read a Google or Meta ads notice,
         precheck an iOS app for App Store 4.2, reality-check an AI YouTube plan, explain AI infrastructure
-        bottlenecks, plan a Japan trip by city and month, check a Japan tax-free shopping refund, and look up Japan visa renewal fees.
+        bottlenecks, plan a Japan trip by city and month, check a Japan tax-free shopping refund, look up Japan visa renewal fees, and check whether a suitcase fits on the Shinkansen or what forwarding it costs.
       </p>
       <p>Add this URL to any MCP client that supports streamable HTTP:</p>
       <pre className="url">{MCP_URL}</pre>

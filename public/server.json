@@ -2,8 +2,8 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.sean0007/free-agent-tools",
   "title": "Free Agent Tools",
-  "description": "19 free no-auth tools: pitch roast, Japan visa fee, tax-free refund, idea score, hotel OTA.",
-  "version": "1.3.0",
+  "description": "20 free no-auth tools: pitch roast, Japan visa fee, luggage, tax-free refund, idea score.",
+  "version": "1.4.0",
   "websiteUrl": "https://free-agent-tools.vercel.app",
   "repository": {
     "url": "https://github.com/sean0007/free-agent-tools",
