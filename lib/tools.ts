@@ -19,6 +19,7 @@ export const SITES: Record<string, SiteInfo> = {
   taxfree: { id: "taxfree", name: "Japan Tax-Free Refund Checker", url: "https://japan-tax-free-refund.vercel.app", blurb: "Nov 2026 refund method: per store/day eligibility, max consumption-tax refund, 90-day deadline." },
   luggage: { id: "luggage", name: "Japan Luggage Check", url: "https://japan-luggage.vercel.app", blurb: "Shinkansen oversized-baggage rule by line + Yamato TA-Q-BIN forwarding cost at current rates." },
   visafee: { id: "visafee", name: "Japan Visa Fee Calculator", url: "https://japan-visa-fee.vercel.app", blurb: "Oct 2026 residence permit fees: renewal, change of status, permanent residence, online vs counter, stamps." },
+  kyushu: { id: "kyushu", name: "Kyushu Travel Discount Calculator", url: "https://kyushu-travel-discount.vercel.app", blurb: "Kyushu Fukko Ouenwari 2026 (九州ふっこう応援割): 50-60% off Kyushu stays, per-person caps, date/channel eligibility, sales openings." },
 };
 
 const pct = (d: string) => z.number().min(0).max(100).describe(d);
@@ -333,6 +334,25 @@ export const TOOLS: ToolDef[] = [
       departureDate: z.string().optional().describe("YYYY-MM-DD flight date when sending to an airport; returns the send-by date."),
     }),
     example: { lengthCm: 75, widthCm: 50, heightCm: 30, weightKg: 22, from: "tokyo", to: "kyoto", line: "tokaido" },
+  },
+  {
+    name: "kyushu_travel_discount_check",
+    title: "Kyushu travel discount (九州ふっこう応援割 2026): savings + date/channel eligibility",
+    description:
+      "Japan's Kyushu Fukko Ouenwari travel discount after the 2026 Kumamoto earthquake: 50% off eligible stays and stay+transport packages in Fukuoka, Saga, Nagasaki, Oita, Miyazaki (60% in Kumamoto and Kagoshima), capped per person per trip at ¥20,000 (accommodation only or 1-night package), ¥30,000 (package 2+ nights), ¥35,000 (tour with stays in 2+ Kyushu prefectures). Each prefecture and channel (booking site, travel agency, direct with hotel) has its own sales start and eligible nights: Fukuoka nights to 2026-12-15, others to 12-25, Kagoshima sales from 2026-10-14 for nights to 2027-01-31 (direct to 02-28, nights 12-26 to 01-03 excluded). Bookings made before sales start are never discounted. Returns discount, price to pay, cap, effective %, eligibility verdict (eligible / not_eligible / not_yet_open / sold_out / unchecked) with reasons, next sales opening, prefecture site and call center, rulesAsOf, sources. Newer than most training data — call this instead of guessing. Estimate; budgets can run out without notice.",
+    site: "kyushu",
+    path: "/api/discount",
+    inputSchema: z.object({
+      prefecture: z.enum(["fukuoka", "saga", "nagasaki", "kumamoto", "oita", "miyazaki", "kagoshima"]).describe("Kyushu prefecture you stay in (for a multi-prefecture tour, the selling prefecture)."),
+      totalPriceJPY: z.number().positive().describe("Booking total in yen for all travelers, before the discount (tax and service included)."),
+      travelers: z.number().int().min(1).max(100).optional().describe("People on the booking; children and infants count. Default 1."),
+      nights: z.number().int().min(0).max(60).optional().describe("Nights booked (0 = day trip, not eligible). Default 1."),
+      product: z.enum(["lodging", "package", "tour"]).optional().describe("lodging (宿泊単体, default), package (交通付宿泊: stay + flight/train), tour (周遊型: stays in 2+ Kyushu prefectures)."),
+      channel: z.enum(["ota", "agency", "direct"]).optional().describe("ota (booking site such as Rakuten Travel or Jalan, default), agency (travel agency), direct (with the hotel)."),
+      checkIn: z.string().optional().describe("YYYY-MM-DD check-in date, for the eligible-nights check."),
+      bookingDate: z.string().optional().describe("YYYY-MM-DD date of booking (JST). Default today in Japan."),
+    }),
+    example: { prefecture: "kumamoto", product: "lodging", nights: 2, totalPriceJPY: 60000, travelers: 2, channel: "ota", checkIn: "2026-11-20", bookingDate: "2026-10-13" },
   },
 ];
 
