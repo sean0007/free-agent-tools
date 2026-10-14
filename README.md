@@ -2,10 +2,10 @@
 
 <!-- mcp-name: io.github.sean0007/free-agent-tools -->
 
-A free, no-auth **remote MCP server** (streamable HTTP) with 21 small, deterministic tools your AI agent can call:
+A free, no-auth **remote MCP server** (streamable HTTP) with 22 small, deterministic tools your AI agent can call:
 startup pitch roasting, business idea scoring, price headroom, hotel OTA commission, open-source swaps for SaaS bills,
 Google Ads / Meta Ads notice risk, App Store 4.2 / 4.3 precheck, faceless YouTube reality check,
-AI infrastructure bottlenecks, viral attention patterns, Japan trip planning, Japan tax-free refund checking, Japan visa / residence permit fees, Japan luggage rules / forwarding cost, and the Kyushu travel discount (九州ふっこう応援割).
+AI infrastructure bottlenecks, viral attention patterns, Japan trip planning, Japan tax-free refund checking, Japan visa / residence permit fees, Japan luggage rules / forwarding cost, the Kyushu travel discount (九州ふっこう応援割), and the Japan customs duty-free allowance on arrival.
 
 **Endpoint:** `https://free-agent-tools.vercel.app/mcp`  
 **Landing page with setup for every client:** https://free-agent-tools.vercel.app
@@ -74,6 +74,7 @@ claude mcp add --transport http free-agent-tools https://free-agent-tools.vercel
 | `japan_visa_fee_check` | Japan visa / residence permit fee (from 2026-10-01) |
 | `japan_luggage_check` | Japan suitcase check: Shinkansen oversized-baggage rule + Yamato forwarding cost |
 | `kyushu_travel_discount_check` | Kyushu travel discount (九州ふっこう応援割 2026): savings + date/channel eligibility |
+| `japan_customs_allowance_check` | Japan customs duty-free allowance on arrival: within/over, duty estimate in yen, cash declaration |
 
 All tools are read-only and idempotent.
 
@@ -97,6 +98,7 @@ Every tool is also a free JSON API (GET or POST, CORS open, OpenAPI 3.1, `/.well
 | [Japan Visa Fee Calculator](https://japan-visa-fee.vercel.app) | https://japan-visa-fee.vercel.app/openapi.json |
 | [Japan Luggage Check](https://japan-luggage.vercel.app) | https://japan-luggage.vercel.app/openapi.json |
 | [Kyushu Travel Discount Calculator](https://kyushu-travel-discount.vercel.app) | https://kyushu-travel-discount.vercel.app/openapi.json |
+| [Japan Customs Allowance Checker](https://japan-customs-allowance.vercel.app) | https://japan-customs-allowance.vercel.app/openapi.json |
 
 ## Test it
 

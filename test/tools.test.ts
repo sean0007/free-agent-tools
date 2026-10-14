@@ -30,3 +30,13 @@ test("callToolApi POSTs JSON to the tool's public API", async () => {
   assert.equal(r.ok, true);
   assert.equal(r.data.disclaimer, "d");
 });
+
+test("22 tools, v1.6.0, japan_customs_allowance_check on the customs site", async () => {
+  assert.equal(TOOLS.length, 22);
+  const { readFileSync } = await import("node:fs");
+  for (const f of ["package.json", "server.json", "public/server.json"]) assert.equal(JSON.parse(readFileSync(f, "utf8")).version, "1.6.0", f);
+  const t = TOOLS.find((x) => x.name === "japan_customs_allowance_check");
+  assert.ok(t);
+  assert.equal(SITES[t.site].url, "https://japan-customs-allowance.vercel.app");
+  assert.equal(t.path, "/api/check");
+});

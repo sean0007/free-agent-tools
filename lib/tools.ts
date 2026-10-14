@@ -20,6 +20,7 @@ export const SITES: Record<string, SiteInfo> = {
   luggage: { id: "luggage", name: "Japan Luggage Check", url: "https://japan-luggage.vercel.app", blurb: "Shinkansen oversized-baggage rule by line + Yamato TA-Q-BIN forwarding cost at current rates." },
   visafee: { id: "visafee", name: "Japan Visa Fee Calculator", url: "https://japan-visa-fee.vercel.app", blurb: "Oct 2026 residence permit fees: renewal, change of status, permanent residence, online vs counter, stamps." },
   kyushu: { id: "kyushu", name: "Kyushu Travel Discount Calculator", url: "https://kyushu-travel-discount.vercel.app", blurb: "Kyushu Fukko Ouenwari 2026 (九州ふっこう応援割): 50-60% off Kyushu stays, per-person caps, date/channel eligibility, sales openings." },
+  customs: { id: "customs", name: "Japan Customs Allowance Checker", url: "https://japan-customs-allowance.vercel.app", blurb: "Japan duty-free allowance on arrival: alcohol, tobacco, perfume, ¥200,000 goods, simplified duty in yen, cash over ¥1M declaration." },
 };
 
 const pct = (d: string) => z.number().min(0).max(100).describe(d);
@@ -353,6 +354,38 @@ export const TOOLS: ToolDef[] = [
       bookingDate: z.string().optional().describe("YYYY-MM-DD date of booking (JST). Default today in Japan."),
     }),
     example: { prefecture: "kumamoto", product: "lodging", nights: 2, totalPriceJPY: 60000, travelers: 2, channel: "ota", checkIn: "2026-11-20", bookingDate: "2026-10-13" },
+  },
+  {
+    name: "japan_customs_allowance_check",
+    title: "Japan customs duty-free allowance on arrival: within/over, duty estimate in yen, cash declaration",
+    description:
+      "Japan Customs per-person duty-free allowance when entering Japan (as of 2026-10-14): alcohol 3 bottles of about 760 ml (2.28 L); cigarettes 200 OR cigars 50 OR heat-not-burn 10 packages (200 IQOS/glo sticks, 50 Ploom TECH capsules) OR other tobacco 250 g, more than one kind 250 g total; perfume 2 oz (about 56 ml); other goods ¥200,000 total overseas value, an item kind worth ¥10,000 or less in total is free and not counted, an article over ¥200,000 is fully dutiable. Under 20: no alcohol/tobacco allowance; under 6: only items for the child. Excess duty at the simplified rates: whisky/brandy ¥800/L, rum/gin/vodka ¥500/L, liqueur ¥400/L, distilled ¥300/L, wine/beer ¥200/L, cigarettes and sticks ¥15 each, capsules ¥50, other goods 15% of Customs value (price × 0.6), watches/golf clubs/PCs 10% consumption tax; not applied to articles with Customs value over ¥100,000, cigars or other tobacco. Cash and other means of payment over ¥1,000,000 (¥100,000 bound for North Korea) must be declared. Returns per-category within/over, excess, estimatedSimplifiedDutyJPY (+ High for the strict mixed-tobacco reading), tax-type breakdown truncated to ¥100 (reproduces Customs' ¥19,400 worked example), red/green channel, cashDeclarationRequired, warnings, assumptions, sources, rulesAsOf. Many guides still show pre-2021 tobacco limits — call this instead of guessing. Educational estimate; the Customs officer decides.",
+    site: "customs",
+    path: "/api/check",
+    inputSchema: z.object({
+      ageYears: z.number().min(0).max(120).optional().describe("Traveler age. Under 20 = no alcohol/tobacco allowance; under 6 = only items for the child. Default adult."),
+      travelers: z.number().int().min(1).max(20).optional().describe("People in the same age band pooling allowances. Default 1."),
+      alcoholBottles: z.number().int().min(0).optional().describe("Bottles of alcohol (assumed 760 ml each unless alcoholMl is given)."),
+      alcoholMl: z.number().min(0).optional().describe("Total alcohol volume in ml (allowance 2,280 ml per adult)."),
+      alcoholType: z.enum(["whisky", "brandy", "rum", "gin", "vodka", "liqueur", "distilled", "wine", "beer", "other"]).optional().describe("Drink type for the simplified rate. Default other (¥200/L)."),
+      alcohol: z.array(z.object({ type: z.enum(["whisky", "brandy", "rum", "gin", "vodka", "liqueur", "distilled", "wine", "beer", "other"]), ml: z.number().min(0).optional(), bottles: z.number().int().min(0).optional() })).optional().describe("Several drinks: [{type, ml or bottles}]. Allowance goes to the highest-rate drink first."),
+      cigarettes: z.number().int().min(0).optional().describe("Cigarettes (allowance 200)."),
+      cigars: z.number().int().min(0).optional().describe("Cigars (allowance 50)."),
+      hnbPackages: z.number().int().min(0).optional().describe("Heat-not-burn packs (allowance 10; 20 sticks or 5 capsules each)."),
+      hnbSticks: z.number().int().min(0).optional().describe("Loose IQOS / glo sticks (allowance 200)."),
+      hnbCapsules: z.number().int().min(0).optional().describe("Ploom TECH / with capsules (allowance 50)."),
+      hnbType: z.enum(["sticks", "capsules"]).optional().describe("What hnbPackages contain. Default sticks."),
+      otherTobaccoGrams: z.number().min(0).optional().describe("Pipe / other tobacco in grams (allowance 250 g)."),
+      perfumeMl: z.number().min(0).optional().describe("Perfume in ml (allowance about 56 ml; eau de toilette not counted)."),
+      perfumeOz: z.number().min(0).optional().describe("Perfume in ounces (allowance 2 oz)."),
+      goods: z.array(z.object({ description: z.string().optional(), valueJPY: z.number().positive(), quantity: z.number().int().min(1).optional(), dutyFreeTariff: z.boolean().optional(), forChild: z.boolean().optional() })).optional().describe("Other articles: overseas retail price of ONE article in yen, quantity, dutyFreeTariff true for watches / golf clubs / PCs, forChild for a child's items."),
+      goodsTotalJPY: z.number().min(0).optional().describe("Instead of goods: total overseas value of other articles (approximate)."),
+      cashJPY: z.number().min(0).optional().describe("Cash (yen + foreign in yen) one person carries."),
+      paymentInstrumentsJPY: z.number().min(0).optional().describe("Checks, travelers checks, promissory notes, securities in yen."),
+      boundForNorthKorea: z.boolean().optional().describe("Leaving Japan for North Korea (declaration threshold ¥100,000)."),
+      goldBullionKg: z.number().min(0).optional().describe("Gold bullion carried in kg (over 1 kg must be declared)."),
+    }),
+    example: { ageYears: 35, alcoholBottles: 4, alcoholType: "whisky", cigarettes: 200, goods: [{ description: "Handbag", valueJPY: 120000 }, { description: "Jacket", valueJPY: 130000 }] },
   },
 ];
 
