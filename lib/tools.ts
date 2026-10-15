@@ -20,6 +20,7 @@ export const SITES: Record<string, SiteInfo> = {
   luggage: { id: "luggage", name: "Japan Luggage Check", url: "https://japan-luggage.vercel.app", blurb: "Shinkansen oversized-baggage rule by line + Yamato TA-Q-BIN forwarding cost at current rates." },
   visafee: { id: "visafee", name: "Japan Visa Fee Calculator", url: "https://japan-visa-fee.vercel.app", blurb: "Oct 2026 residence permit fees: renewal, change of status, permanent residence, online vs counter, stamps." },
   kyushu: { id: "kyushu", name: "Kyushu Travel Discount Calculator", url: "https://kyushu-travel-discount.vercel.app", blurb: "Kyushu Fukko Ouenwari 2026 (九州ふっこう応援割): 50-60% off Kyushu stays, per-person caps, date/channel eligibility, sales openings." },
+  tbscreen: { id: "tbscreen", name: "Japan TB Screening Check (JPETS)", url: "https://japan-tb-screening.vercel.app", blurb: "Japan Pre-Entry TB Screening: who needs a TB Clearance Certificate for a COE/visa (PH, NP, VN; Indonesia from 2027-01-04), exemptions, 180-day validity, Panel Clinics." },
   customs: { id: "customs", name: "Japan Customs Allowance Checker", url: "https://japan-customs-allowance.vercel.app", blurb: "Japan duty-free allowance on arrival: alcohol, tobacco, perfume, ¥200,000 goods, simplified duty in yen, cash over ¥1M declaration." },
 };
 
@@ -386,6 +387,27 @@ export const TOOLS: ToolDef[] = [
       goldBullionKg: z.number().min(0).optional().describe("Gold bullion carried in kg (over 1 kg must be declared)."),
     }),
     example: { ageYears: 35, alcoholBottles: 4, alcoholType: "whisky", cigarettes: 200, goods: [{ description: "Handbag", valueJPY: 120000 }, { description: "Jacket", valueJPY: 130000 }] },
+  },
+  {
+    name: "japan_tb_screening_check",
+    title: "Japan pre-entry TB screening (JPETS): do I need a TB Clearance Certificate for my COE or visa?",
+    description:
+      "Japan Pre-Entry Tuberculosis Screening (JPETS, 入国前結核スクリーニング), rules as of 2026-10-15: nationals of the Philippines, Nepal, Viet Nam, Indonesia, Myanmar and China entering Japan as mid- to long-term residents (stay over 3 months; not Temporary Visitor, Diplomat, Official; re-entry permit holders excluded), plus Designated Activities No. 53 (Digital Nomad) and No. 54, must submit a TB Clearance Certificate from a designated Panel Clinic with the Certificate of Eligibility (COE) application, or with the visa application if there is no COE. Mandatory for applications filed from 2025-06-23 (Philippines, Nepal), 2025-09-01 (Viet Nam), 2027-01-04 (Indonesia, scheduled; Panel Clinics open 2026-11-02); Myanmar and China not announced. Temporarily exempt: Specified Skilled Workers (特定技能), EPA nurses/care workers, JET, JICA trainees, JDS, Japan Foundation invitees, embassy-recommended MEXT scholars, commissioned student training, Designated Activities No. 55, special-zone housekeepers, and anyone whose residence outside the 6 countries is documented. Technical intern trainees and students are NOT exempt. A COE filed before the mandatory date needs no certificate at the visa stage. Certificate valid 180 days from the chest X-ray (90 after close contact), checked at COE filing only. Returns verdict (required / not_yet_required / exempt / not_required), reasons, timeline, X-ray window and validity, documents, the Panel Clinic list (filter by city), notes, sources, rulesAsOf. Training data may predate the Indonesia start; call this instead of guessing. Educational guide, not legal or medical advice.",
+    site: "tbscreen",
+    path: "/api/check",
+    inputSchema: z.object({
+      nationality: z.string().describe("Passport nationality: philippines, nepal, vietnam, indonesia, myanmar, china (aliases like ID, VN, PH, Filipino accepted); any other country = not covered."),
+      status: z.string().optional().describe("Status of residence / purpose: student, technical_intern_training, employment_for_skill_development, engineer_humanities, skilled_labor, nursing_care, intra_company_transferee, business_manager, highly_skilled_professional, dependent, spouse_of_japanese, long_term_resident, designated_activities, digital_nomad, specified_skilled_worker, epa_nurse_care_worker, jet_programme, jica_trainee, mext_embassy_scholar, temporary_visitor, diplomat_official, other_mid_long (default). Aliases like tokutei_ginou, ssw, gijinkoku, tourist accepted."),
+      applicationDate: z.string().optional().describe("YYYY-MM-DD the COE (or direct visa) application is filed. Default today in Japan."),
+      residenceCountry: z.string().optional().describe("Country where the applicant lives now if not the nationality: a non-target country = exempt (with residence permit); 'japan' = change of status / extension inside Japan = not required."),
+      route: z.enum(["coe", "visa_direct"]).optional().describe("coe (default) or visa_direct (visa at an embassy without a COE; default for digital_nomad)."),
+      xrayDate: z.string().optional().describe("YYYY-MM-DD of the Panel Clinic chest X-ray, to check validity on the application date."),
+      stayMonths: z.number().min(1).max(600).optional().describe("Expected period of stay in months; 3 or less is not covered (except Digital Nomad)."),
+      hasReentryPermit: z.boolean().optional().describe("Returning on a re-entry permit (incl. special re-entry): excluded."),
+      closeContact: z.boolean().optional().describe("Close contact with active infectious pulmonary TB within 2 months before the X-ray: validity 90 days."),
+      city: z.string().optional().describe("Filter Panel Clinics by city, e.g. Jakarta, Surabaya, Hanoi, Ho Chi Minh City, Manila, Kathmandu."),
+    }),
+    example: { nationality: "indonesia", status: "student", applicationDate: "2027-01-15" },
   },
 ];
 

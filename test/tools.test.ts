@@ -31,12 +31,20 @@ test("callToolApi POSTs JSON to the tool's public API", async () => {
   assert.equal(r.data.disclaimer, "d");
 });
 
-test("22 tools, v1.6.0, japan_customs_allowance_check on the customs site", async () => {
-  assert.equal(TOOLS.length, 22);
-  const { readFileSync } = await import("node:fs");
-  for (const f of ["package.json", "server.json", "public/server.json"]) assert.equal(JSON.parse(readFileSync(f, "utf8")).version, "1.6.0", f);
+test("japan_customs_allowance_check on the customs site", async () => {
   const t = TOOLS.find((x) => x.name === "japan_customs_allowance_check");
   assert.ok(t);
   assert.equal(SITES[t.site].url, "https://japan-customs-allowance.vercel.app");
   assert.equal(t.path, "/api/check");
+});
+
+test("23 tools, v1.7.0, japan_tb_screening_check on the JPETS site", async () => {
+  assert.equal(TOOLS.length, 23);
+  const { readFileSync } = await import("node:fs");
+  for (const f of ["package.json", "server.json", "public/server.json"]) assert.equal(JSON.parse(readFileSync(f, "utf8")).version, "1.7.0", f);
+  const t = TOOLS.find((x) => x.name === "japan_tb_screening_check");
+  assert.ok(t);
+  assert.equal(SITES[t.site].url, "https://japan-tb-screening.vercel.app");
+  assert.equal(t.path, "/api/check");
+  assert.equal(t.inputSchema.safeParse(t.example).success, true);
 });
