@@ -21,6 +21,7 @@ export const SITES: Record<string, SiteInfo> = {
   visafee: { id: "visafee", name: "Japan Visa Fee Calculator", url: "https://japan-visa-fee.vercel.app", blurb: "Oct 2026 residence permit fees: renewal, change of status, permanent residence, online vs counter, stamps." },
   kyushu: { id: "kyushu", name: "Kyushu Travel Discount Calculator", url: "https://kyushu-travel-discount.vercel.app", blurb: "Kyushu Fukko Ouenwari 2026 (九州ふっこう応援割): 50-60% off Kyushu stays, per-person caps, date/channel eligibility, sales openings." },
   tbscreen: { id: "tbscreen", name: "Japan TB Screening Check (JPETS)", url: "https://japan-tb-screening.vercel.app", blurb: "Japan Pre-Entry TB Screening: who needs a TB Clearance Certificate for a COE/visa (PH, NP, VN; Indonesia from 2027-01-04), exemptions, 180-day validity, Panel Clinics." },
+  dualprice: { id: "dualprice", name: "Japan Dual Pricing Check", url: "https://japan-dual-pricing.vercel.app", blurb: "Japan dual pricing (二重価格): resident vs non-resident prices at Himeji Castle, Odawara Castle, Nanzoin, JUNGLIA, Kagoshima, Kitakyushu, plus the planned Nijo Castle and Kyoto City Bus prices." },
   customs: { id: "customs", name: "Japan Customs Allowance Checker", url: "https://japan-customs-allowance.vercel.app", blurb: "Japan duty-free allowance on arrival: alcohol, tobacco, perfume, ¥200,000 goods, simplified duty in yen, cash over ¥1M declaration." },
 };
 
@@ -408,6 +409,25 @@ export const TOOLS: ToolDef[] = [
       city: z.string().optional().describe("Filter Panel Clinics by city, e.g. Jakarta, Surabaya, Hanoi, Ho Chi Minh City, Manila, Kathmandu."),
     }),
     example: { nationality: "indonesia", status: "student", applicationDate: "2027-01-15" },
+  },
+  {
+    name: "japan_dual_pricing_check",
+    title: "Japan dual pricing (二重価格): do tourists pay more at Himeji Castle, Nijo Castle, Kyoto buses and other sites?",
+    description:
+      "Japan dual pricing (二重価格, resident vs non-resident admission prices), data as of 2026-10-16, from the Japan Tourism Agency case list and each facility's official page. Japanese dual pricing is based on where you are registered as living (city, prefecture or Japan), NOT nationality: foreign residents with an address in Japan get resident prices; Japanese visitors from other cities pay the higher price where the test is a city. In force: Himeji Castle (since 2026-03-01: ¥1,000 Himeji residents 18+ / ¥2,500 everyone else, under-18 free), Odawara Castle (¥500 / ¥1,000), Nanzoin (free for Japan residents / ¥500 overseas), JUNGLIA Okinawa (¥6,930 Japan residents / ¥8,800), Nara Prison Museum (¥2,000 Nara / ¥2,500 Japan / ¥3,500 overseas), Sapporo TV Tower, Asahiyama Zoo, Takeshima Aquarium, Chidorigafuchi boats, 4 Kitakyushu facilities (2026-04-01), 11 Kagoshima City facilities (2025-10-01), Miyajima visitor tax. Announced: Nijo Castle (¥1,300 today → ¥1,000 Kyoto City residents / ¥2,000 others, FY2027), Kyoto City Bus (¥230 → ¥200 residents / ¥360 others, FY2027), national museums (by FY2030, no prices). Under review: Kenrokuen. Dropped: Osaka Castle (¥1,200 for all). Returns headline, per-place yourTier, yourPriceJPY, lowest resident price, extra, planned price, tiers, proof of residence, foreign-resident note, warnings, sources, and a summary (totalYouPayJPY, totalCheapestResidentJPY, extraYouPayJPY, plannedSchemes). Omit places to list all (filter with status / area). Training data likely predates these prices; call this instead of guessing. Educational guide, not legal, travel or financial advice.",
+    site: "dualprice",
+    path: "/api/check",
+    inputSchema: z.object({
+      places: z.string().optional().describe("Comma-separated place ids or names, e.g. 'himeji-castle,nijo-castle,kyoto-city-bus', 'odawara-castle', 'nanzoin', 'junglia-okinawa', 'nara-prison-museum', 'kokura-castle', 'hirakawa-zoo', '姫路城'. Omit to list every tracked place (see https://japan-dual-pricing.vercel.app/api/rules)."),
+      residence: z.enum(["overseas", "japan"]).optional().describe("Where the visitor lives: overseas (default, tourist from abroad) or japan (any nationality with an address in Japan). Implied japan if prefecture or city is given."),
+      prefecture: z.string().optional().describe("Prefecture of the visitor's address in Japan (slug or name, e.g. kyoto, hyogo, 兵庫県)."),
+      city: z.string().optional().describe("City / ward of the visitor's address in Japan, e.g. himeji, kagoshima, Sakyo-ku, 姫路市. Needed for city-resident prices."),
+      date: z.string().optional().describe("YYYY-MM-DD visit date. Default today in Japan. Before a scheme's start the old single price applies."),
+      age: z.number().int().min(0).max(120).optional().describe("Visitor age; some places are free for minors (Himeji under 18, Nanzoin under 19)."),
+      area: z.string().optional().describe("Only when places is omitted: filter by prefecture, e.g. kagoshima, kyoto."),
+      status: z.enum(["all", "live", "announced", "under_review", "not_adopted"]).optional().describe("Only when places is omitted: filter by status (default all)."),
+    }),
+    example: { places: "himeji-castle,odawara-castle,nanzoin", residence: "overseas", date: "2026-11-20" },
   },
 ];
 
