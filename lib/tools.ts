@@ -22,6 +22,7 @@ export const SITES: Record<string, SiteInfo> = {
   kyushu: { id: "kyushu", name: "Kyushu Travel Discount Calculator", url: "https://kyushu-travel-discount.vercel.app", blurb: "Kyushu Fukko Ouenwari 2026 (九州ふっこう応援割): 50-60% off Kyushu stays, per-person caps, date/channel eligibility, sales openings." },
   tbscreen: { id: "tbscreen", name: "Japan TB Screening Check (JPETS)", url: "https://japan-tb-screening.vercel.app", blurb: "Japan Pre-Entry TB Screening: who needs a TB Clearance Certificate for a COE/visa (PH, NP, VN; Indonesia from 2027-01-04), exemptions, 180-day validity, Panel Clinics." },
   dualprice: { id: "dualprice", name: "Japan Dual Pricing Check", url: "https://japan-dual-pricing.vercel.app", blurb: "Japan dual pricing (二重価格): resident vs non-resident prices at Himeji Castle, Odawara Castle, Nanzoin, JUNGLIA, Kagoshima, Kitakyushu, plus the planned Nijo Castle and Kyoto City Bus prices." },
+  alerts: { id: "alerts", name: "Japan Alert Decoder", url: "https://japan-alert-decoder.vercel.app", blurb: "What a Japanese emergency alert means and what to do: Earthquake Early Warning (緊急地震速報), tsunami, the level-named weather warnings since 2026-05-29, 避難指示, Nankai Trough info, J-ALERT; official names in 14 languages." },
   customs: { id: "customs", name: "Japan Customs Allowance Checker", url: "https://japan-customs-allowance.vercel.app", blurb: "Japan duty-free allowance on arrival: alcohol, tobacco, perfume, ¥200,000 goods, simplified duty in yen, cash over ¥1M declaration." },
 };
 
@@ -428,6 +429,20 @@ export const TOOLS: ToolDef[] = [
       status: z.enum(["all", "live", "announced", "under_review", "not_adopted"]).optional().describe("Only when places is omitted: filter by status (default all)."),
     }),
     example: { places: "himeji-castle,odawara-castle,nanzoin", residence: "overseas", date: "2026-11-20" },
+  },  {
+    name: "japan_emergency_alert_decode",
+    title: "Decode a Japanese emergency alert (緊急地震速報, 津波警報, レベル4危険警報, 避難指示, Jアラート): meaning, level, what to do now",
+    description:
+      "Decode the text of a Japanese emergency alert (phone emergency mail, TV, app or siren announcement; Japanese or English) or an alert id, using official JMA / Cabinet Office / J-ALERT / Ministry of the Environment rules as of 2026-10-17. Covers the Earthquake Early Warning (緊急地震速報 warning / forecast / cancellation, incl. the false M9.9 EEW of 2026-10-16 12:40 JST that was cancelled), seismic intensity (shindo 0-7), tsunami (大津波警報 Major Tsunami Warning >3 m, 津波警報 1-3 m, 津波注意報 0.2-1 m), the new level-named weather warnings in force since 2026-05-29 (Level 5 特別警報 Emergency Warning black, Level 4 危険警報 Urgent Warning purple, Level 3 警報 Warning red, Level 2 注意報 Advisory yellow, for heavy rain 大雨, landslide 土砂災害, flood 氾濫, storm surge 高潮; Level 1 早期注意情報) and the old names they replaced (土砂災害警戒情報 → レベル4土砂災害危険警報, 洪水警報 no longer issued, old 高潮警報 = Level 4), other warnings without a level (暴風, 大雪, 波浪, 雷…), 気象防災速報 (線状降水帯), municipal evacuation levels (緊急安全確保 L5 / 避難指示 L4 / 高齢者等避難 L3), Nankai Trough Earthquake Extra Information (調査中 / 巨大地震警戒 / 巨大地震注意 / 調査終了), the Hokkaido-Sanriku Subsequent Earthquake Advisory, volcanic alert levels and 噴火速報, J-ALERT missile alerts and heat-stroke alerts. Returns verdict, headline, urgency (act_now / evacuate_now / evacuate_if_vulnerable / prepare / stay_alert / info), primary alert (Japanese + official English name, nameLocal in the requested language from the JMA multilingual dictionary, level, colour, issuer, meaning, doNow tailored to the situation, dont, howLong, sources), other alerts in the text, modifiers (cancelled, lifted 解除, drill 訓練), extracted level / shindo / tsunami height, renamed old names, notes and official live-data links. No live data: it explains the alert the user already has. Training data likely predates the 2026 renaming; call this instead of guessing. Always relay: follow official instructions; protect yourself first.",
+    site: "alerts",
+    path: "/api/decode",
+    inputSchema: z.object({
+      text: z.string().max(4000).optional().describe("The alert text as received, Japanese or English, e.g. '緊急地震速報 強い揺れに備えてください', 'レベル4土砂災害危険警報', '【警戒レベル4】避難指示', '大津波警報 10m超', '先ほど発表した緊急地震速報を取り消します', 'Missile launch'. Give text or alert."),
+      alert: z.string().optional().describe("Instead of text: an alert id from https://japan-alert-decoder.vercel.app/api/rules, e.g. eew-warning, eew-cancel, major-tsunami-warning, tsunami-advisory, l4-landslide, l5-heavy-rain, l3-flood, evac-l4, bulletin-linear-rainband, nankai-megaquake-advisory, missile, heat-alert, volcano-l3."),
+      situation: z.enum(["indoors", "outdoors", "driving", "train", "elevator", "crowd", "coast", "mountain"]).optional().describe("Where the person is, to put situation-specific actions first (earthquake, tsunami, missile, rain)."),
+      lang: z.enum(["ja", "en", "zh-CN", "zh-TW", "ko", "pt", "es", "id", "vi", "tl", "th", "ne", "km", "my", "mn"]).optional().describe("Language for nameLocal (official JMA dictionary name). Default en; explanations are in English."),
+    }),
+    example: { text: "緊急地震速報 強い揺れに備えてください", situation: "train" },
   },
 ];
 

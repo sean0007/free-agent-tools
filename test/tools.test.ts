@@ -46,13 +46,23 @@ test("japan_tb_screening_check on the JPETS site", async () => {
   assert.equal(t.inputSchema.safeParse(t.example).success, true);
 });
 
-test("24 tools, v1.8.0, japan_dual_pricing_check on the dual pricing site", async () => {
-  assert.equal(TOOLS.length, 24);
-  const { readFileSync } = await import("node:fs");
-  for (const f of ["package.json", "server.json", "public/server.json"]) assert.equal(JSON.parse(readFileSync(f, "utf8")).version, "1.8.0", f);
+test("japan_dual_pricing_check on the dual pricing site", async () => {
   const t = TOOLS.find((x) => x.name === "japan_dual_pricing_check");
   assert.ok(t);
   assert.equal(SITES[t.site].url, "https://japan-dual-pricing.vercel.app");
   assert.equal(t.path, "/api/check");
   assert.equal(t.inputSchema.safeParse(t.example).success, true);
+});
+
+test("25 tools, v1.9.0, japan_emergency_alert_decode on the alert decoder site", async () => {
+  assert.equal(TOOLS.length, 25);
+  const { readFileSync } = await import("node:fs");
+  for (const f of ["package.json", "server.json", "public/server.json"]) assert.equal(JSON.parse(readFileSync(f, "utf8")).version, "1.9.0", f);
+  const t = TOOLS.find((x) => x.name === "japan_emergency_alert_decode");
+  assert.ok(t);
+  assert.equal(SITES[t.site].url, "https://japan-alert-decoder.vercel.app");
+  assert.equal(t.path, "/api/decode");
+  assert.equal(t.inputSchema.safeParse(t.example).success, true);
+  assert.equal(t.inputSchema.safeParse({ alert: "l4-landslide", lang: "vi" }).success, true);
+  assert.equal(t.inputSchema.safeParse({ text: "x", situation: "moon" }).success, false);
 });
