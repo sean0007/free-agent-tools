@@ -2,8 +2,8 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.sean0007/free-agent-tools",
   "title": "Free Agent Tools",
-  "description": "25 free no-auth tools: pitch roast, Japan alert decoder, dual pricing, TB screening, customs.",
-  "version": "1.9.0",
+  "description": "26 free no-auth tools: pitch roast, Japan PR check, alert decoder, dual pricing, TB screening.",
+  "version": "1.10.0",
   "websiteUrl": "https://free-agent-tools.vercel.app",
   "repository": {
     "url": "https://github.com/sean0007/free-agent-tools",

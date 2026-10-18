@@ -23,6 +23,7 @@ export const SITES: Record<string, SiteInfo> = {
   tbscreen: { id: "tbscreen", name: "Japan TB Screening Check (JPETS)", url: "https://japan-tb-screening.vercel.app", blurb: "Japan Pre-Entry TB Screening: who needs a TB Clearance Certificate for a COE/visa (PH, NP, VN; Indonesia from 2027-01-04), exemptions, 180-day validity, Panel Clinics." },
   dualprice: { id: "dualprice", name: "Japan Dual Pricing Check", url: "https://japan-dual-pricing.vercel.app", blurb: "Japan dual pricing (二重価格): resident vs non-resident prices at Himeji Castle, Odawara Castle, Nanzoin, JUNGLIA, Kagoshima, Kitakyushu, plus the planned Nijo Castle and Kyoto City Bus prices." },
   alerts: { id: "alerts", name: "Japan Alert Decoder", url: "https://japan-alert-decoder.vercel.app", blurb: "What a Japanese emergency alert means and what to do: Earthquake Early Warning (緊急地震速報), tsunami, the level-named weather warnings since 2026-05-29, 避難指示, Nankai Trough info, J-ALERT; official names in 14 languages." },
+  prcheck: { id: "prcheck", name: "Japan PR Guideline Check", url: "https://japan-pr-check.vercel.app", blurb: "Japan permanent residence (永住) guideline revised 2026-10-01: which version applies by filing date, spouse 3+1 → 5+3 years from 2027-04-01, 3-year visa transition, 6-month / 2.5-year absence rule, B1 Japanese." },
   customs: { id: "customs", name: "Japan Customs Allowance Checker", url: "https://japan-customs-allowance.vercel.app", blurb: "Japan duty-free allowance on arrival: alcohol, tobacco, perfume, ¥200,000 goods, simplified duty in yen, cash over ¥1M declaration." },
 };
 
@@ -443,6 +444,36 @@ export const TOOLS: ToolDef[] = [
       lang: z.enum(["ja", "en", "zh-CN", "zh-TW", "ko", "pt", "es", "id", "vi", "tl", "th", "ne", "km", "my", "mn"]).optional().describe("Language for nameLocal (official JMA dictionary name). Default en; explanations are in English."),
     }),
     example: { text: "緊急地震速報 強い揺れに備えてください", situation: "train" },
+  },
+  {
+    name: "japan_permanent_residency_check",
+    title: "Japan permanent residence (永住): which guideline applies to my filing date, and when do I meet the time requirement?",
+    description:
+      "Japan permanent residence guideline (永住許可に関するガイドライン) revised by the Immigration Services Agency on 2026-10-01, rules as of 2026-10-18. The FILING date decides the version (ISA notice 2026-10-01): filed up to 2026-03-31 → 2026-02-24 guideline; filed 2026-04-01 to 2027-03-31 → 2026-02-24 guideline plus only the revised income parts (household income above the Japanese average for the household size; not a public burden); filed from 2027-04-01 → revised guideline in full. Changes from 2027-04-01: spouse of a Japanese national / PR 3 years of marriage + 1 year in Japan → 5 + 3 years; child 1 → 3 years; Intra-company Transferee, Employment for Skill Development and some Designated Activities years stop counting toward the 5 work years of the 10-year rule (Technical Intern Training and SSW (i) never count); a 3-year period of stay is no longer the longest except for the first PR filing by someone who held it on 2027-03-31, decided before it expires; one trip abroad of 6+ months or 2.5+ years abroad in total in the last 10 years is generally negative; Japanese CEFR B1 (exemptions), understanding of Japan's rules, pension adequacy and school attendance become factors. Fee ¥200,000 from 2026-10-01. Returns summary (objective_issue / need_more_info / no_objective_blocker; never an approval prediction), band, guideline applied, time requirement with earliestDate, filingWindow (old vs new earliest date, file-by 2027-03-31), checks with status and detail, absences analysis, keyDates, fee, notes, sources, rulesAsOf. ISA does not publish income thresholds; permission is discretionary. Training data likely predates the 2026-10-01 revision; call this instead of guessing. Educational guide, not legal advice.",
+    site: "prcheck",
+    path: "/api/check",
+    inputSchema: z.object({
+      route: z.string().describe("PR route: general (10 years), spouse (of Japanese / PR / SPR), child (of Japanese / PR / SPR), long_term_resident, refugee, hsp70, hsp80, special_hsp (J-Skip), contribution, special_zone_regional. Aliases like 10y, haigusha, 定住者, hsp accepted."),
+      applicationDate: z.string().optional().describe("YYYY-MM-DD the PR application is (or will be) received by ISA. Default today in Japan."),
+      residenceSince: z.string().optional().describe("YYYY-MM-DD start of continuous residence in Japan."),
+      yearsInJapan: z.number().min(0).max(100).optional().describe("Instead of residenceSince: years of continuous residence in Japan at the filing date."),
+      workYears: z.number().min(0).max(100).optional().describe("General route: continuous years on a work or residence status (not Student / Dependent)."),
+      marriageDate: z.string().optional().describe("Spouse route: YYYY-MM-DD the substantive marriage began."),
+      qualifyingSince: z.string().optional().describe("Special routes: YYYY-MM-DD the status / points / recognition was reached (LTR, refugee, HSP 70/80, J-Skip, special zone)."),
+      currentStatus: z.string().optional().describe("Current status of residence: engineer_humanities, intra_company_transferee, highly_skilled_professional, business_manager, skilled_labor, specified_skilled_worker_2, specified_skilled_worker_1, technical_intern_training, employment_for_skill_development, spouse_of_japanese, spouse_of_permanent_resident, long_term_resident, dependent, student, designated_activities, other_work."),
+      periodOfStay: z.string().optional().describe("Current period of stay: 5y, 3y, 1y, 6m, 3m, unlimited, other."),
+      periodExpiry: z.string().optional().describe("YYYY-MM-DD the current period of stay expires (matters for the 3-year transition after 2027-04-01)."),
+      firstPrApplication: z.boolean().optional().describe("Is this the first PR application filed from 2027-04-01? (3-year transition; default true)."),
+      trips: z.array(z.object({ depart: z.string(), return: z.string() })).optional().describe("Trips abroad in the last 10 years, each {depart, return} as YYYY-MM-DD."),
+      longestTripDays: z.number().min(0).max(4000).optional().describe("Instead of trips: longest single trip abroad in the last 10 years, in days."),
+      totalAbsenceDays: z.number().min(0).max(4000).optional().describe("Instead of trips: total days abroad in the last 10 years."),
+      japaneseB1: z.union([z.boolean(), z.enum(["yes", "no", "unknown"])]).optional().describe("Japanese at CEFR B1 or above?"),
+      b1Exemption: z.enum(["none", "hsp_or_family", "schooling_6y", "pr_child_born_in_japan"]).optional().describe("B1 exemption, if any."),
+      schoolAgeChildren: z.enum(["none", "all_in_school", "not_in_school"]).optional().describe("School-age children (6-15) and whether they attend elementary / junior high school."),
+      taxesPaidOnTime: z.union([z.boolean(), z.enum(["yes", "no", "unknown"])]).optional().describe("All taxes paid on time?"),
+      pensionInsurancePaidOnTime: z.union([z.boolean(), z.enum(["yes", "no", "unknown"])]).optional().describe("Pension and health insurance paid on time?"),
+    }),
+    example: { route: "spouse", applicationDate: "2027-02-15", residenceSince: "2025-09-01", marriageDate: "2023-06-10", periodOfStay: "3y" },
   },
 ];
 

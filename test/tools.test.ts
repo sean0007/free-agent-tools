@@ -54,10 +54,7 @@ test("japan_dual_pricing_check on the dual pricing site", async () => {
   assert.equal(t.inputSchema.safeParse(t.example).success, true);
 });
 
-test("25 tools, v1.9.0, japan_emergency_alert_decode on the alert decoder site", async () => {
-  assert.equal(TOOLS.length, 25);
-  const { readFileSync } = await import("node:fs");
-  for (const f of ["package.json", "server.json", "public/server.json"]) assert.equal(JSON.parse(readFileSync(f, "utf8")).version, "1.9.0", f);
+test("japan_emergency_alert_decode on the alert decoder site", async () => {
   const t = TOOLS.find((x) => x.name === "japan_emergency_alert_decode");
   assert.ok(t);
   assert.equal(SITES[t.site].url, "https://japan-alert-decoder.vercel.app");
@@ -65,4 +62,17 @@ test("25 tools, v1.9.0, japan_emergency_alert_decode on the alert decoder site",
   assert.equal(t.inputSchema.safeParse(t.example).success, true);
   assert.equal(t.inputSchema.safeParse({ alert: "l4-landslide", lang: "vi" }).success, true);
   assert.equal(t.inputSchema.safeParse({ text: "x", situation: "moon" }).success, false);
+});
+
+test("26 tools, v1.10.0, japan_permanent_residency_check on the PR check site", async () => {
+  assert.equal(TOOLS.length, 26);
+  const { readFileSync } = await import("node:fs");
+  for (const f of ["package.json", "server.json", "public/server.json"]) assert.equal(JSON.parse(readFileSync(f, "utf8")).version, "1.10.0", f);
+  const t = TOOLS.find((x) => x.name === "japan_permanent_residency_check");
+  assert.ok(t);
+  assert.equal(SITES[t.site].url, "https://japan-pr-check.vercel.app");
+  assert.equal(t.path, "/api/check");
+  assert.equal(t.inputSchema.safeParse(t.example).success, true);
+  assert.equal(t.inputSchema.safeParse({ route: "general", trips: [{ depart: "2020-01-10", return: "2020-07-10" }], japaneseB1: true }).success, true);
+  assert.equal(t.inputSchema.safeParse({ applicationDate: "2027-01-01" }).success, false);
 });

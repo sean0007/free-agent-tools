@@ -2,10 +2,10 @@
 
 <!-- mcp-name: io.github.sean0007/free-agent-tools -->
 
-A free, no-auth **remote MCP server** (streamable HTTP) with 25 small, deterministic tools your AI agent can call:
+A free, no-auth **remote MCP server** (streamable HTTP) with 26 small, deterministic tools your AI agent can call:
 startup pitch roasting, business idea scoring, price headroom, hotel OTA commission, open-source swaps for SaaS bills,
 Google Ads / Meta Ads notice risk, App Store 4.2 / 4.3 precheck, faceless YouTube reality check,
-AI infrastructure bottlenecks, viral attention patterns, Japan trip planning, Japan tax-free refund checking, Japan visa / residence permit fees, Japan luggage rules / forwarding cost, the Kyushu travel discount (九州ふっこう応援割), the Japan customs duty-free allowance on arrival, Japan pre-entry TB screening (JPETS), Japan dual pricing (resident vs non-resident prices), and a Japan emergency alert decoder (緊急地震速報, tsunami, the level-named warnings since 2026-05-29, 避難指示, J-ALERT).
+AI infrastructure bottlenecks, viral attention patterns, Japan trip planning, Japan tax-free refund checking, Japan visa / residence permit fees, Japan luggage rules / forwarding cost, the Kyushu travel discount (九州ふっこう応援割), the Japan customs duty-free allowance on arrival, Japan pre-entry TB screening (JPETS), Japan dual pricing (resident vs non-resident prices), a Japan emergency alert decoder (緊急地震速報, tsunami, the level-named warnings since 2026-05-29, 避難指示, J-ALERT), and a Japan permanent residence (永住) guideline check for the 2026-10-01 revision.
 
 **Endpoint:** `https://free-agent-tools.vercel.app/mcp`  
 **Landing page with setup for every client:** https://free-agent-tools.vercel.app
@@ -78,6 +78,7 @@ claude mcp add --transport http free-agent-tools https://free-agent-tools.vercel
 | `japan_tb_screening_check` | Japan pre-entry TB screening (JPETS): TB Clearance Certificate needed? Indonesia from 2027-01-04, exemptions, Panel Clinics |
 | `japan_dual_pricing_check` | Japan dual pricing (二重価格): resident vs non-resident prices at Himeji Castle, Nijo Castle (FY2027), Kyoto bus, Kagoshima, Kitakyushu… |
 | `japan_emergency_alert_decode` | Japanese emergency alert decoder: 緊急地震速報 EEW (and cancellations), tsunami, レベル4危険警報 and the 2026-05-29 renaming, 避難指示, Nankai Trough, J-ALERT; meaning, level, what to do, 14-language official names |
+| `japan_permanent_residency_check` | Japan permanent residence (永住) guideline revised 2026-10-01: which version applies by filing date, spouse 3+1 → 5+3 years from 2027-04-01, 3-year visa transition, 6-month / 2.5-year absence rule, B1 |
 
 All tools are read-only and idempotent.
 
@@ -105,6 +106,7 @@ Every tool is also a free JSON API (GET or POST, CORS open, OpenAPI 3.1, `/.well
 | [Japan TB Screening Check (JPETS)](https://japan-tb-screening.vercel.app) | https://japan-tb-screening.vercel.app/openapi.json |
 | [Japan Dual Pricing Check](https://japan-dual-pricing.vercel.app) | https://japan-dual-pricing.vercel.app/openapi.json |
 | [Japan Alert Decoder](https://japan-alert-decoder.vercel.app) | https://japan-alert-decoder.vercel.app/openapi.json |
+| [Japan PR Guideline Check](https://japan-pr-check.vercel.app) | https://japan-pr-check.vercel.app/openapi.json |
 
 ## Test it
 
