@@ -76,7 +76,7 @@ claude mcp add --transport http free-agent-tools https://free-agent-tools.vercel
 | `kyushu_travel_discount_check` | Kyushu travel discount (九州ふっこう応援割 2026): savings + date/channel eligibility |
 | `japan_customs_allowance_check` | Japan customs duty-free allowance on arrival: within/over, duty estimate in yen, cash declaration |
 | `japan_tb_screening_check` | Japan pre-entry TB screening (JPETS): TB Clearance Certificate needed? Indonesia from 2027-01-04, exemptions, Panel Clinics |
-| `japan_dual_pricing_check` | Japan dual pricing (二重価格): resident vs non-resident prices at Himeji Castle, Nijo Castle (FY2027), Kyoto bus, Kagoshima, Kitakyushu… |
+| `japan_dual_pricing_check` | Japan dual pricing (二重価格): resident vs non-resident prices at Himeji Castle, Nijo Castle (FY2027), Kyoto bus, Kagoshima, Kitakyushu… Full tracker table and checker: https://japan-dual-pricing.vercel.app |
 | `japan_emergency_alert_decode` | Japanese emergency alert decoder: 緊急地震速報 EEW (and cancellations), tsunami, レベル4危険警報 and the 2026-05-29 renaming, 避難指示, Nankai Trough, J-ALERT; meaning, level, what to do, 14-language official names |
 | `japan_permanent_residency_check` | Japan permanent residence (永住) guideline revised 2026-10-01: which version applies by filing date, spouse 3+1 → 5+3 years from 2027-04-01, 3-year visa transition, 6-month / 2.5-year absence rule, B1 |
 
