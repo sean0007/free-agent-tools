@@ -64,10 +64,7 @@ test("japan_emergency_alert_decode on the alert decoder site", async () => {
   assert.equal(t.inputSchema.safeParse({ text: "x", situation: "moon" }).success, false);
 });
 
-test("26 tools, v1.10.0, japan_permanent_residency_check on the PR check site", async () => {
-  assert.equal(TOOLS.length, 26);
-  const { readFileSync } = await import("node:fs");
-  for (const f of ["package.json", "server.json", "public/server.json"]) assert.equal(JSON.parse(readFileSync(f, "utf8")).version, "1.10.0", f);
+test("japan_permanent_residency_check on the PR check site", async () => {
   const t = TOOLS.find((x) => x.name === "japan_permanent_residency_check");
   assert.ok(t);
   assert.equal(SITES[t.site].url, "https://japan-pr-check.vercel.app");
@@ -75,4 +72,18 @@ test("26 tools, v1.10.0, japan_permanent_residency_check on the PR check site", 
   assert.equal(t.inputSchema.safeParse(t.example).success, true);
   assert.equal(t.inputSchema.safeParse({ route: "general", trips: [{ depart: "2020-01-10", return: "2020-07-10" }], japaneseB1: true }).success, true);
   assert.equal(t.inputSchema.safeParse({ applicationDate: "2027-01-01" }).success, false);
+});
+
+test("27 tools, v1.11.0, japan_international_postage_check on the postage site", async () => {
+  assert.equal(TOOLS.length, 27);
+  const { readFileSync } = await import("node:fs");
+  for (const f of ["package.json", "server.json", "public/server.json"]) assert.equal(JSON.parse(readFileSync(f, "utf8")).version, "1.11.0", f);
+  const t = TOOLS.find((x) => x.name === "japan_international_postage_check");
+  assert.ok(t);
+  assert.equal(SITES[t.site].url, "https://japan-intl-postage.vercel.app");
+  assert.equal(t.path, "/api/check");
+  assert.equal(t.inputSchema.safeParse(t.example).success, true);
+  assert.equal(t.inputSchema.safeParse({ zone: 3, weightKg: 1.2, service: "ems", shipDate: "2027-02-10" }).success, true);
+  assert.equal(t.inputSchema.safeParse({ destination: "US", weightGrams: 40000 }).success, false);
+  assert.equal(t.inputSchema.safeParse({ destination: "US", service: "rocket" }).success, false);
 });

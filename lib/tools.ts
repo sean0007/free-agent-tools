@@ -24,6 +24,7 @@ export const SITES: Record<string, SiteInfo> = {
   dualprice: { id: "dualprice", name: "Japan Dual Pricing Check", url: "https://japan-dual-pricing.vercel.app", blurb: "Japan dual pricing (二重価格): resident vs non-resident prices at Himeji Castle, Odawara Castle, Nanzoin, JUNGLIA, Kagoshima, Kitakyushu, plus the planned Nijo Castle and Kyoto City Bus prices." },
   alerts: { id: "alerts", name: "Japan Alert Decoder", url: "https://japan-alert-decoder.vercel.app", blurb: "What a Japanese emergency alert means and what to do: Earthquake Early Warning (緊急地震速報), tsunami, the level-named weather warnings since 2026-05-29, 避難指示, Nankai Trough info, J-ALERT; official names in 14 languages." },
   prcheck: { id: "prcheck", name: "Japan PR Guideline Check", url: "https://japan-pr-check.vercel.app", blurb: "Japan permanent residence (永住) guideline revised 2026-10-01: which version applies by filing date, spouse 3+1 → 5+3 years from 2027-04-01, 3-year visa transition, 6-month / 2.5-year absence rule, B1 Japanese." },
+  postage: { id: "postage", name: "Japan International Postage 2027", url: "https://japan-intl-postage.vercel.app", blurb: "Japan Post international mail prices now vs from 2027-02-01: EMS (1 kg bands), air / surface parcels, small packets, International Air Packet, letters, postcards; every zone, cheapest option." },
   customs: { id: "customs", name: "Japan Customs Allowance Checker", url: "https://japan-customs-allowance.vercel.app", blurb: "Japan duty-free allowance on arrival: alcohol, tobacco, perfume, ¥200,000 goods, simplified duty in yen, cash over ¥1M declaration." },
 };
 
@@ -474,6 +475,24 @@ export const TOOLS: ToolDef[] = [
       pensionInsurancePaidOnTime: z.union([z.boolean(), z.enum(["yes", "no", "unknown"])]).optional().describe("Pension and health insurance paid on time?"),
     }),
     example: { route: "spouse", applicationDate: "2027-02-15", residenceSince: "2025-09-01", marriageDate: "2023-06-10", periodOfStay: "3y" },
+  },
+  {
+    name: "japan_international_postage_check",
+    title: "How much does it cost to mail something from Japan abroad, now and after Japan Post's 2027-02-01 price rise?",
+    description:
+      "Japan Post international mail prices from its published tables, rates as of 2026-10-19. Japan Post revises international mail prices for items POSTED from 2027-02-01 (press release 2026-10-09; Asahi reported about +37% on average): every EMS, international parcel (air, SAL, surface), letter, postcard, small packet and International Air Packet price changes; EMS bands up to 6 kg become 1 kg steps (now 500 g first band, 100 g steps to 1 kg), so light EMS rises most (US 500 g ¥3,900 → ¥7,400; 2 kg ¥7,900 → ¥10,300); postcards ¥100 → ¥140 everywhere; the special surcharge on zone 3/4 EMS and air parcels ends (¥0). SAL stays suspended (restart undecided). Zones: 1 China/Korea/Taiwan, 2 rest of Asia, 3 Oceania/Canada/Mexico/Middle East/Europe, 4 USA incl. territories, 5 Central & South America/Africa. Returns per service: current and revised price with weight band, change in yen and %, the price that applies on shipDate, tracked/available/suspended; cheapest, cheapest tracked and cheapest air option before and after; the EMS weight-band shift; 2027 parcel same-time discount (10–49 items 10%, 50+ 13%); notes (acceptance by country can be suspended), sources, disclaimer. Training data predates the 2026-10-09 announcement; call this instead of guessing. Unofficial estimate, not affiliated with Japan Post; size limits, customs and prohibited items are not checked.",
+    site: "postage",
+    path: "/api/check",
+    inputSchema: z.object({
+      destination: z.string().optional().describe("Destination country: ISO code (US, GB, AU, CN…) or English / Japanese name (アメリカ, イギリス, 香港). Give this or zone."),
+      zone: z.number().int().min(1).max(5).optional().describe("Japan Post zone 1–5 if the country is not known."),
+      weightGrams: z.number().min(1).max(30000).optional().describe("Weight in grams incl. packaging (rounded up to the price band). Not needed for service postcard_air."),
+      weightKg: z.number().min(0.001).max(30).optional().describe("Weight in kg, instead of weightGrams."),
+      service: z.enum(["ems", "parcel_air", "parcel_sal", "parcel_surface", "small_packet_air", "airpacket", "letter_standard_air", "postcard_air"]).optional().describe("Quote only this service. Default: every service the weight fits."),
+      shipDate: z.string().optional().describe("YYYY-MM-DD the item is posted. Up to 2027-01-31 current prices apply, from 2027-02-01 revised. Default today in Japan."),
+      items: z.number().int().min(1).max(10000).optional().describe("Parcels posted together (for the 2027 same-time discount note)."),
+    }),
+    example: { destination: "US", weightGrams: 500 },
   },
 ];
 
