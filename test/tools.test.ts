@@ -74,10 +74,7 @@ test("japan_permanent_residency_check on the PR check site", async () => {
   assert.equal(t.inputSchema.safeParse({ applicationDate: "2027-01-01" }).success, false);
 });
 
-test("27 tools, v1.11.0, japan_international_postage_check on the postage site", async () => {
-  assert.equal(TOOLS.length, 27);
-  const { readFileSync } = await import("node:fs");
-  for (const f of ["package.json", "server.json", "public/server.json"]) assert.equal(JSON.parse(readFileSync(f, "utf8")).version, "1.11.0", f);
+test("japan_international_postage_check on the postage site", async () => {
   const t = TOOLS.find((x) => x.name === "japan_international_postage_check");
   assert.ok(t);
   assert.equal(SITES[t.site].url, "https://japan-intl-postage.vercel.app");
@@ -86,4 +83,18 @@ test("27 tools, v1.11.0, japan_international_postage_check on the postage site",
   assert.equal(t.inputSchema.safeParse({ zone: 3, weightKg: 1.2, service: "ems", shipDate: "2027-02-10" }).success, true);
   assert.equal(t.inputSchema.safeParse({ destination: "US", weightGrams: 40000 }).success, false);
   assert.equal(t.inputSchema.safeParse({ destination: "US", service: "rocket" }).success, false);
+});
+
+test("28 tools, v1.12.0, japan_reentry_deadline_check on the re-entry site", async () => {
+  assert.equal(TOOLS.length, 28);
+  const { readFileSync } = await import("node:fs");
+  for (const f of ["package.json", "server.json", "public/server.json"]) assert.equal(JSON.parse(readFileSync(f, "utf8")).version, "1.12.0", f);
+  const t = TOOLS.find((x) => x.name === "japan_reentry_deadline_check");
+  assert.ok(t);
+  assert.equal(SITES[t.site].url, "https://japan-reentry-check.vercel.app");
+  assert.equal(t.path, "/api/check");
+  assert.equal(t.inputSchema.safeParse(t.example).success, true);
+  assert.equal(t.inputSchema.safeParse({ status: "permanent", departureDate: "2026-12-25" }).success, true);
+  assert.equal(t.inputSchema.safeParse({ status: "alien", departureDate: "2026-12-25" }).success, false);
+  assert.equal(t.inputSchema.safeParse({ status: "mid_long" }).success, false);
 });

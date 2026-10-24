@@ -25,6 +25,7 @@ export const SITES: Record<string, SiteInfo> = {
   alerts: { id: "alerts", name: "Japan Alert Decoder", url: "https://japan-alert-decoder.vercel.app", blurb: "What a Japanese emergency alert means and what to do: Earthquake Early Warning (緊急地震速報), tsunami, the level-named weather warnings since 2026-05-29, 避難指示, Nankai Trough info, J-ALERT; official names in 14 languages." },
   prcheck: { id: "prcheck", name: "Japan PR Guideline Check", url: "https://japan-pr-check.vercel.app", blurb: "Japan permanent residence (永住) guideline revised 2026-10-01: which version applies by filing date, spouse 3+1 → 5+3 years from 2027-04-01, 3-year visa transition, 6-month / 2.5-year absence rule, B1 Japanese." },
   postage: { id: "postage", name: "Japan International Postage 2027", url: "https://japan-intl-postage.vercel.app", blurb: "Japan Post international mail prices now vs from 2027-02-01: EMS (1 kg bands), air / surface parcels, small packets, International Air Packet, letters, postcards; every zone, cheapest option." },
+  reentry: { id: "reentry", name: "Japan Re-entry Deadline Check", url: "https://japan-reentry-check.vercel.app", blurb: "When must a foreign resident be back in Japan? Deemed re-entry (みなし再入国) 1 year or residence-card expiry if sooner (SPR 2 years), regular re-entry permits, and the 2-month special period while a renewal or change of status is pending." },
   customs: { id: "customs", name: "Japan Customs Allowance Checker", url: "https://japan-customs-allowance.vercel.app", blurb: "Japan duty-free allowance on arrival: alcohol, tobacco, perfume, ¥200,000 goods, simplified duty in yen, cash over ¥1M declaration." },
 };
 
@@ -493,6 +494,24 @@ export const TOOLS: ToolDef[] = [
       items: z.number().int().min(1).max(10000).optional().describe("Parcels posted together (for the 2027 same-time discount note)."),
     }),
     example: { destination: "US", weightGrams: 500 },
+  },
+  {
+    name: "japan_reentry_deadline_check",
+    title: "By what date must a foreign resident who leaves Japan be back so their status doesn't lapse?",
+    description:
+      "Applies Japan's Immigration Control Act art. 26-2 (deemed re-entry permit, みなし再入国許可), art. 26 (regular re-entry permit) and art. 20(6) (special period while an extension or change of status is pending), with Civil Code date counting (departure day not counted; leave 2026-10-24 → back by 2027-10-24; expiry 2026-12-30 + 2 months → 2027-02-28). Rules as of 2026-10-24. Deemed re-entry: 1 year from departure, or the period-of-stay expiry if earlier; special permanent residents 2 years; CANNOT be extended abroad; not available to temporary visitors (短期滞在), periods of 3 months or less, or refugee-applicant Designated Activities. Renewal/change pending past expiry: return by the earlier of 1 year from departure or old expiry + 2 months, and receive the decision at the immigration office by then (ISA Q&A). Regular permit: its expiry (max 5 years, SPR 6), extendable at an embassy by up to 1 year. Returns verdict (in_time | too_late | deadline_only | no_deemed_reentry | already_expired), returnBy with legal basis, days allowed, margin vs returnDate, specialPeriod {endsOn, mustReceiveDecisionBy}, canExtendAbroad, steps (ED card tick box), warnings, sources, disclaimer. Use for 'how long can I leave Japan', 'can I travel while my visa renewal is pending', permanent residents abroad. Educational, not legal advice; not affiliated with ISA.",
+    site: "reentry",
+    path: "/api/check",
+    inputSchema: z.object({
+      status: z.enum(["mid_long", "permanent", "spr", "short_term", "three_months_or_less", "refugee_applicant"]).describe("mid_long = residence card holder (work, student, spouse, dependent, long-term resident…); permanent; spr = special permanent resident; short_term = tourist / temporary visitor; three_months_or_less; refugee_applicant (Designated Activities)."),
+      departureDate: z.string().describe("YYYY-MM-DD the person leaves Japan."),
+      periodExpiry: z.string().optional().describe("YYYY-MM-DD period-of-stay expiry on the residence card (在留期限). Required for mid_long; not for permanent/spr."),
+      pending: z.enum(["none", "renewal", "change"]).optional().describe("Extension or change-of-status application filed before expiry and not yet decided. Default none."),
+      permit: z.enum(["deemed", "single", "multiple"]).optional().describe("deemed (みなし再入国, default) or a regular re-entry permit in the passport (single / multiple)."),
+      permitExpiry: z.string().optional().describe("YYYY-MM-DD expiry of a regular re-entry permit (required if permit is single or multiple)."),
+      returnDate: z.string().optional().describe("YYYY-MM-DD planned return, to check in_time vs too_late and the margin."),
+    }),
+    example: { status: "mid_long", departureDate: "2026-12-20", periodExpiry: "2027-01-15", pending: "renewal", returnDate: "2027-02-10" },
   },
 ];
 

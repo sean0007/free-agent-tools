@@ -2,10 +2,10 @@
 
 <!-- mcp-name: io.github.sean0007/free-agent-tools -->
 
-A free, no-auth **remote MCP server** (streamable HTTP) with 27 small, deterministic tools your AI agent can call:
+A free, no-auth **remote MCP server** (streamable HTTP) with 28 small, deterministic tools your AI agent can call:
 startup pitch roasting, business idea scoring, price headroom, hotel OTA commission, open-source swaps for SaaS bills,
 Google Ads / Meta Ads notice risk, App Store 4.2 / 4.3 precheck, faceless YouTube reality check,
-AI infrastructure bottlenecks, viral attention patterns, Japan trip planning, Japan tax-free refund checking, Japan visa / residence permit fees, Japan luggage rules / forwarding cost, the Kyushu travel discount (九州ふっこう応援割), the Japan customs duty-free allowance on arrival, Japan pre-entry TB screening (JPETS), Japan dual pricing (resident vs non-resident prices), a Japan emergency alert decoder (緊急地震速報, tsunami, the level-named warnings since 2026-05-29, 避難指示, J-ALERT), a Japan permanent residence (永住) guideline check for the 2026-10-01 revision, and a Japan international postage calculator (Japan Post prices now vs from 2027-02-01).
+AI infrastructure bottlenecks, viral attention patterns, Japan trip planning, Japan tax-free refund checking, Japan visa / residence permit fees, Japan luggage rules / forwarding cost, the Kyushu travel discount (九州ふっこう応援割), the Japan customs duty-free allowance on arrival, Japan pre-entry TB screening (JPETS), Japan dual pricing (resident vs non-resident prices), a Japan emergency alert decoder (緊急地震速報, tsunami, the level-named warnings since 2026-05-29, 避難指示, J-ALERT), a Japan permanent residence (永住) guideline check for the 2026-10-01 revision, a Japan international postage calculator (Japan Post prices now vs from 2027-02-01), and a Japan re-entry deadline check (みなし再入国 / re-entry permit / pending renewal).
 
 **Endpoint:** `https://free-agent-tools.vercel.app/mcp`  
 **Landing page with setup for every client:** https://free-agent-tools.vercel.app
@@ -80,6 +80,7 @@ claude mcp add --transport http free-agent-tools https://free-agent-tools.vercel
 | `japan_emergency_alert_decode` | Japanese emergency alert decoder: 緊急地震速報 EEW (and cancellations), tsunami, レベル4危険警報 and the 2026-05-29 renaming, 避難指示, Nankai Trough, J-ALERT; meaning, level, what to do, 14-language official names |
 | `japan_permanent_residency_check` | Japan permanent residence (永住) guideline revised 2026-10-01: which version applies by filing date, spouse 3+1 → 5+3 years from 2027-04-01, 3-year visa transition, 6-month / 2.5-year absence rule, B1 |
 | `japan_international_postage_check` | Japan Post international mail prices now vs from 2027-02-01: EMS (1 kg bands), air / surface parcels, small packets, International Air Packet, letters, postcards; any country, cheapest option |
+| `japan_reentry_deadline_check` | When must a foreign resident be back in Japan: deemed re-entry (1 year or card expiry, SPR 2 years, not extendable abroad), regular re-entry permit, 2-month special period while a renewal is pending |
 
 All tools are read-only and idempotent.
 
@@ -109,6 +110,7 @@ Every tool is also a free JSON API (GET or POST, CORS open, OpenAPI 3.1, `/.well
 | [Japan Alert Decoder](https://japan-alert-decoder.vercel.app) | https://japan-alert-decoder.vercel.app/openapi.json |
 | [Japan PR Guideline Check](https://japan-pr-check.vercel.app) | https://japan-pr-check.vercel.app/openapi.json |
 | [Japan International Postage 2027](https://japan-intl-postage.vercel.app) | https://japan-intl-postage.vercel.app/openapi.json |
+| [Japan Re-entry Deadline Check](https://japan-reentry-check.vercel.app) | https://japan-reentry-check.vercel.app/openapi.json |
 
 ## Test it
 
