@@ -26,6 +26,7 @@ export const SITES: Record<string, SiteInfo> = {
   prcheck: { id: "prcheck", name: "Japan PR Guideline Check", url: "https://japan-pr-check.vercel.app", blurb: "Japan permanent residence (永住) guideline revised 2026-10-01: which version applies by filing date, spouse 3+1 → 5+3 years from 2027-04-01, 3-year visa transition, 6-month / 2.5-year absence rule, B1 Japanese." },
   postage: { id: "postage", name: "Japan International Postage 2027", url: "https://japan-intl-postage.vercel.app", blurb: "Japan Post international mail prices now vs from 2027-02-01: EMS (1 kg bands), air / surface parcels, small packets, International Air Packet, letters, postcards; every zone, cheapest option." },
   reentry: { id: "reentry", name: "Japan Re-entry Deadline Check", url: "https://japan-reentry-check.vercel.app", blurb: "When must a foreign resident be back in Japan? Deemed re-entry (みなし再入国) 1 year or residence-card expiry if sooner (SPR 2 years), regular re-entry permits, and the 2-month special period while a renewal or change of status is pending." },
+  dependents: { id: "dependents", name: "Japan Overseas Dependents Check", url: "https://japan-overseas-dependents.vercel.app", blurb: "Can you claim a relative living outside Japan as a dependent (国外居住親族)? Age-band rules (30-69 need study abroad, disability or ¥380,000+ remitted), 2026 ¥620,000 income limit, deduction amounts, tax saving, remittance proof and the 3+ payment statement." },
   customs: { id: "customs", name: "Japan Customs Allowance Checker", url: "https://japan-customs-allowance.vercel.app", blurb: "Japan duty-free allowance on arrival: alcohol, tobacco, perfume, ¥200,000 goods, simplified duty in yen, cash over ¥1M declaration." },
 };
 
@@ -512,6 +513,30 @@ export const TOOLS: ToolDef[] = [
       returnDate: z.string().optional().describe("YYYY-MM-DD planned return, to check in_time vs too_late and the margin."),
     }),
     example: { status: "mid_long", departureDate: "2026-12-20", periodExpiry: "2027-01-15", pending: "renewal", returnDate: "2027-02-10" },
+  },
+  {
+    name: "japan_overseas_dependents_check",
+    title: "Can a Japan taxpayer claim a relative living abroad as a dependent, and how much does it save?",
+    description:
+      "Applies Japan's income tax rules for non-resident relatives (国外居住親族, Income Tax Act art. 84/85 and 2023 + 2026 revisions; rules as of 2026-10-25, NTA Q&A revised 2026-08). Ages 16-29 and 70+ qualify on relationship + remittance proof; ages 30-69 only if studying abroad, disabled, or you sent ¥380,000+ to them in the year (送金関係書類 / 38万円送金書類). Relative income limit ¥620,000 for 2026 (¥580,000 for 2025). Amounts: general ¥380,000, specified 19-22 ¥630,000 (special deduction table above the limit), elderly 70+ ¥480,000, spouse ¥380,000/480,000 by taxpayer income, disability add-on ¥270,000/¥400,000; under 16 no dependent deduction. Valid proof: bank transfer, credit card family card, electronic payment; cash and payments via a third party don't count; 3+ payments allow a statement with first and last records. Returns verdict (eligible | conditional | short_of_380k | not_eligible), route, deductions[], totalDeduction, estimatedIncomeTaxSaving (incl. 2.1% surtax), remittance {minimumTotal, shortfall, sendBy, statementOption}, documents, forms, steps, warnings, NTA sources, disclaimer. Use for 'can I claim my parents abroad', 年末調整 国外扶養, sending money home. Educational, not tax advice; not affiliated with the NTA.",
+    site: "dependents",
+    path: "/api/check",
+    inputSchema: z.object({
+      relationship: z.enum(["spouse", "child", "parent", "grandparent", "sibling", "grandchild", "other"]).describe("Relationship to the taxpayer. parent includes parent-in-law; other = other relative within 6 degrees of blood / 3 of marriage."),
+      age: z.number().int().min(0).max(130).optional().describe("Relative's age on Dec 31 of the tax year. Give age or birthDate."),
+      birthDate: z.string().optional().describe("YYYY-MM-DD (born Jan 1 counts a year older)."),
+      year: z.number().int().min(2025).max(2026).optional().describe("Tax year 2026 (default) or 2025."),
+      relativeIncome: z.number().min(0).optional().describe("Relative's total income (合計所得金額) in yen; usually 0 for a non-resident with no Japan-source income."),
+      taxpayerIncome: z.number().min(0).optional().describe("Your own total income in yen (spouse amounts depend on it)."),
+      studyingAbroad: z.boolean().optional().describe("Relative left Japan to study abroad (ages 30-69 route)."),
+      disability: z.enum(["none", "disabled", "special"]).optional().describe("Disability under Japanese criteria. Default none."),
+      remittanceTotal: z.number().min(0).optional().describe("Yen paid directly to this relative in the year. Omit if unknown → verdict conditional."),
+      remittanceCount: z.number().int().min(0).optional().describe("Number of payments (3+ unlocks the statement option)."),
+      firstLastTotal: z.number().min(0).optional().describe("Sum of the first and last payments of the year."),
+      method: z.enum(["bank", "credit_card", "electronic_payment", "cash", "via_representative", "joint_account"]).optional().describe("How you paid. Default bank. cash / via_representative / joint_account are not valid proof."),
+      marginalRate: z.number().optional().describe("Your income-tax bracket in percent (5, 10, 20, 23, 33, 40, 45) to estimate the saving."),
+    }),
+    example: { relationship: "parent", age: 62, remittanceTotal: 450000, remittanceCount: 6, marginalRate: 10 },
   },
 ];
 
