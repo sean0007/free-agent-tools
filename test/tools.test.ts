@@ -96,10 +96,7 @@ test("japan_reentry_deadline_check on the re-entry site", async () => {
   assert.equal(t.inputSchema.safeParse({ status: "mid_long" }).success, false);
 });
 
-test("29 tools, v1.13.0, japan_overseas_dependents_check on the dependents site", async () => {
-  assert.equal(TOOLS.length, 29);
-  const { readFileSync } = await import("node:fs");
-  for (const f of ["package.json", "server.json", "public/server.json"]) assert.equal(JSON.parse(readFileSync(f, "utf8")).version, "1.13.0", f);
+test("japan_overseas_dependents_check on the dependents site", async () => {
   const t = TOOLS.find((x) => x.name === "japan_overseas_dependents_check");
   assert.ok(t);
   assert.equal(SITES[t.site].url, "https://japan-overseas-dependents.vercel.app");
@@ -108,4 +105,18 @@ test("29 tools, v1.13.0, japan_overseas_dependents_check on the dependents site"
   assert.equal(t.inputSchema.safeParse({ relationship: "child", age: 20, method: "credit_card" }).success, true);
   assert.equal(t.inputSchema.safeParse({ relationship: "cousin", age: 40 }).success, false);
   assert.equal(t.inputSchema.safeParse({ age: 40 }).success, false);
+});
+
+test("30 tools, v1.14.0, japan_parttime_work_check on the parttime site", async () => {
+  assert.equal(TOOLS.length, 30);
+  const { readFileSync } = await import("node:fs");
+  for (const f of ["package.json", "server.json", "public/server.json"]) assert.equal(JSON.parse(readFileSync(f, "utf8")).version, "1.14.0", f);
+  const t = TOOLS.find((x) => x.name === "japan_parttime_work_check");
+  assert.ok(t);
+  assert.equal(SITES[t.site].url, "https://japan-parttime-check.vercel.app");
+  assert.equal(t.path, "/api/check");
+  assert.equal(t.inputSchema.safeParse(t.example).success, true);
+  assert.equal(t.inputSchema.safeParse({ status: "student", job: "convenience_store", dailyHours: "8v,8v,4" }).success, true);
+  assert.equal(t.inputSchema.safeParse({ status: "alien", job: "restaurant" }).success, false);
+  assert.equal(t.inputSchema.safeParse({ status: "student" }).success, false);
 });

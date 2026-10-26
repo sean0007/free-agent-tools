@@ -27,6 +27,7 @@ export const SITES: Record<string, SiteInfo> = {
   postage: { id: "postage", name: "Japan International Postage 2027", url: "https://japan-intl-postage.vercel.app", blurb: "Japan Post international mail prices now vs from 2027-02-01: EMS (1 kg bands), air / surface parcels, small packets, International Air Packet, letters, postcards; every zone, cheapest option." },
   reentry: { id: "reentry", name: "Japan Re-entry Deadline Check", url: "https://japan-reentry-check.vercel.app", blurb: "When must a foreign resident be back in Japan? Deemed re-entry (みなし再入国) 1 year or residence-card expiry if sooner (SPR 2 years), regular re-entry permits, and the 2-month special period while a renewal or change of status is pending." },
   dependents: { id: "dependents", name: "Japan Overseas Dependents Check", url: "https://japan-overseas-dependents.vercel.app", blurb: "Can you claim a relative living outside Japan as a dependent (国外居住親族)? Age-band rules (30-69 need study abroad, disability or ¥380,000+ remitted), 2026 ¥620,000 income limit, deduction amounts, tax saving, remittance proof and the 3+ payment statement." },
+  parttime: { id: "parttime", name: "Japan Part-time Work Check", url: "https://japan-parttime-check.vercel.app", blurb: "Can a foreign resident do this part-time job or side gig on their Japanese status (資格外活動許可)? Comprehensive 28-hour vs individual permission, rolling 7-day hours, students' 8 h/day vacation rule, and the 2026-10-01 pachinko/game-center change for Dependent holders." },
   customs: { id: "customs", name: "Japan Customs Allowance Checker", url: "https://japan-customs-allowance.vercel.app", blurb: "Japan duty-free allowance on arrival: alcohol, tobacco, perfume, ¥200,000 goods, simplified duty in yen, cash over ¥1M declaration." },
 };
 
@@ -537,6 +538,27 @@ export const TOOLS: ToolDef[] = [
       marginalRate: z.number().optional().describe("Your income-tax bracket in percent (5, 10, 20, 23, 33, 40, 45) to estimate the saving."),
     }),
     example: { relationship: "parent", age: 62, remittanceTotal: 450000, remittanceCount: 6, marginalRate: 10 },
+  },
+  {
+    name: "japan_parttime_work_check",
+    title: "Can a foreign resident in Japan work this part-time job or side gig on their status, and which permission is needed?",
+    description:
+      "Applies the Immigration Services Agency's rules on permission for activities outside status of residence (資格外活動許可, Immigration Control Act art. 19(2); rules as of 2026-10-26). Comprehensive permission (包括許可) for Student, Dependent and Designated Activities (dependent / job hunting): 28 hours in any 7 days, all jobs combined; students 8 h/day in the school's official long vacation; never at 風俗営業 / 特定遊興飲食店 / sex-related venues in any role. NEW 2026-10-01: Dependent (家族滞在) holders only may work at pachinko, mahjong and licensed game centers (風営法 2条1項4号・5号) with an individual permission per venue (employer + applicant pledges, venue license copy, ≤ 28 h total); students still excluded. Contractor delivery counts only if hours are objectively verifiable; freelance with unclear hours needs individual permission; company/staff/office needs Business Manager. Work visas: same-field OK, other work status needs individual permission, simple labor generally not allowed. SSW, Technical Intern, Temporary Visitor: no side jobs; Working Holiday free except 風俗営業; PR/spouse/long-term resident unrestricted. Returns verdict (ok | ok_if_hours | apply_first | individual_permission | status_change | not_allowed | no_restriction), headline, summary, permissionNeeded, hours {weeklyLimit, dailyLimitOnVacation, withinLimit, rolling windows}, conditions, documents, steps, warnings, ISA sources, disclaimer. Use for 'can I work on a student visa', 留学生 アルバイト 28時間, 家族滞在 パチンコ, Uber Eats on a visa. Educational, not immigration advice; not affiliated with ISA.",
+    site: "parttime",
+    path: "/api/check",
+    inputSchema: z.object({
+      status: z.enum(["student", "dependent", "designated_dependent", "job_hunting", "work_visa", "specified_skilled", "technical_intern", "working_holiday", "temporary_visitor", "unrestricted"]).describe("Status of residence. student = 留学; dependent = 家族滞在; designated_dependent / job_hunting = 特定活動; work_visa = 技人国, 教育, 教授 etc.; specified_skilled = 特定技能; technical_intern = 技能実習; temporary_visitor = tourist; unrestricted = permanent resident, spouse of Japanese/PR, long-term resident."),
+      job: z.enum(["restaurant", "izakaya_bar", "convenience_store", "retail", "hotel", "factory_warehouse", "cleaning", "office", "language_teacher", "interpreter_translator", "tutor", "delivery_employee", "delivery_gig", "freelance", "internship", "pachinko", "mahjong", "game_center", "hostess_bar", "nightclub", "adult"]).describe("Kind of work or venue. izakaya_bar = no hosting of guests; hostess_bar = hosting (接待) venues incl. snack/girls bar; delivery_gig = app contractor (Uber Eats etc.); internship = over 28 h/week."),
+      permission: z.enum(["none", "comprehensive", "individual", "unknown"]).optional().describe("Permission already held. comprehensive = 28-hour stamp on the residence card. Default unknown."),
+      weeklyHours: z.number().min(0).max(168).optional().describe("Hours in a 7-day period across ALL side jobs."),
+      dailyHours: z.string().optional().describe("Day-by-day hours, comma separated, all jobs combined; suffix v = school long-vacation day (students only), e.g. '8v,8v,8v,4,4,0,0'. Checks every rolling 7-day window."),
+      longVacation: z.boolean().optional().describe("Students: hours fall in the school's official long vacation (8 h/day rule)."),
+      enrolled: z.boolean().optional().describe("Students: still enrolled and attending. Default true."),
+      hasEmployeesOrOffice: z.boolean().optional().describe("Freelance: hires staff, has a company or rents an office."),
+      internshipEligible: z.boolean().optional().describe("Students: final-year undergrad with ~90%+ credits, final-year master's/PhD, or credit-bearing practicum."),
+      sameCategoryWork: z.boolean().optional().describe("Work visa: side job is the same kind of work the visa covers."),
+    }),
+    example: { status: "dependent", job: "pachinko", permission: "comprehensive", weeklyHours: 20 },
   },
 ];
 
