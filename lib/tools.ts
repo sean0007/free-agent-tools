@@ -28,6 +28,7 @@ export const SITES: Record<string, SiteInfo> = {
   reentry: { id: "reentry", name: "Japan Re-entry Deadline Check", url: "https://japan-reentry-check.vercel.app", blurb: "When must a foreign resident be back in Japan? Deemed re-entry (みなし再入国) 1 year or residence-card expiry if sooner (SPR 2 years), regular re-entry permits, and the 2-month special period while a renewal or change of status is pending." },
   dependents: { id: "dependents", name: "Japan Overseas Dependents Check", url: "https://japan-overseas-dependents.vercel.app", blurb: "Can you claim a relative living outside Japan as a dependent (国外居住親族)? Age-band rules (30-69 need study abroad, disability or ¥380,000+ remitted), 2026 ¥620,000 income limit, deduction amounts, tax saving, remittance proof and the 3+ payment statement." },
   parttime: { id: "parttime", name: "Japan Part-time Work Check", url: "https://japan-parttime-check.vercel.app", blurb: "Can a foreign resident do this part-time job or side gig on their Japanese status (資格外活動許可)? Comprehensive 28-hour vs individual permission, rolling 7-day hours, students' 8 h/day vacation rule, and the 2026-10-01 pachinko/game-center change for Dependent holders." },
+  driving: { id: "driving", name: "Japan Driving Check", url: "https://japan-driving-check.vercel.app", blurb: "Can you drive in Japan on your foreign license? Geneva IDP vs Japanese translation (Germany, Switzerland, France, Belgium, Monaco, Taiwan) vs no route, your last driving day (1 year from landing, IDP validity, 3-month rule), and 外免切替 conversion after the 2025-10-01 changes." },
   customs: { id: "customs", name: "Japan Customs Allowance Checker", url: "https://japan-customs-allowance.vercel.app", blurb: "Japan duty-free allowance on arrival: alcohol, tobacco, perfume, ¥200,000 goods, simplified duty in yen, cash over ¥1M declaration." },
 };
 
@@ -559,6 +560,28 @@ export const TOOLS: ToolDef[] = [
       sameCategoryWork: z.boolean().optional().describe("Work visa: side job is the same kind of work the visa covers."),
     }),
     example: { status: "dependent", job: "pachinko", permission: "comprehensive", weeklyHours: 20 },
+  },
+  {
+    name: "japan_driving_check",
+    title: "Can this person drive in Japan on their foreign license, until when, and can they convert it to a Japanese license (外免切替)?",
+    description:
+      "Applies Road Traffic Act art. 107-2 / 97-2 as published by the National Police Agency and Tokyo police (rules as of 2026-10-27; Geneva list = NPA data May 2026). Short-term driving: a 1949 Geneva-format IDP from an issuing party (US via AAA, UK, Canada, Australia, Korea, India, Thailand, Philippines, Hong Kong, most of Europe…; Vienna-format IDPs invalid; UAE/Bangladesh issue two kinds), or for Switzerland, Germany, France, Belgium, Monaco and Taiwan the home license + an official Japanese translation (JAF, embassy, 訪日運転者支援協会, ADAC, 台湾日本関係協会/ZIPLUS). Non-issuing parties (Russia, Bulgaria, Serbia, Ghana…) and unlisted places (China, Vietnam, Brazil, Indonesia, Nepal, Mexico…) have no route; NPA inquiry open for Nigeria, Morocco, Jamaica etc. Period: 1 year from landing, capped by IDP validity (1 year from issue) and license expiry; residents' trips under 3 months don't restart it (3-month rule), visitors restart each landing. Conversion (外免切替): valid license, 3+ months in the issuing country after getting it, 住民票 required since 2025-10-01 (tourists can't), tests waived for 28 countries + US states OH, OR, CO, VA, HI, MD, WA (Indiana: driving check only), otherwise 50-question knowledge check (45 to pass) + driving check; reported Oct–Dec 2025 pass rates 42.8% / 13.1%; Tokyo fees ¥2,500 + ¥2,350. Returns verdict (can_drive | not_yet | expired | need_document | not_valid | unclear), headline, summary, howToDrive, period {countStart, lastDay, daysLeft, limits, restarts}, conversion {canApply, blockers, tests, documents, fees, notes}, steps, warnings, sources, disclaimer. Use for 'can I drive in Japan with an international license', 'rent a car in Japan on a US license', 国際免許 日本 いつまで, 外免切替. Educational, not legal advice; not affiliated with NPA or JAF.",
+    site: "driving",
+    path: "/api/check",
+    inputSchema: z.object({
+      country: z.string().min(2).max(60).describe("Country/region that issued the driver's license: ISO code (US, GB, CN, TW, DE, HK…) or English/Japanese name."),
+      usState: z.string().max(30).optional().describe("US licenses: issuing state code, e.g. WA, HI, CA (matters for conversion tests)."),
+      document: z.enum(["auto", "idp", "translation", "license_only", "japanese_license"]).optional().describe("What the driver holds. auto (default) = tell me what's needed."),
+      residency: z.enum(["visitor", "resident", "japanese_abroad"]).optional().describe("visitor = tourist/short-term (default); resident = residence card, on 住民票; japanese_abroad = Japanese national living abroad."),
+      entryDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("YYYY-MM-DD landing date in Japan (residents: landing that started the count)."),
+      trips: z.string().max(400).optional().describe("Residents: trips abroad since entryDate as left_returned pairs, comma separated, e.g. '2026-08-01_2026-09-10,2026-12-20_2027-01-05'."),
+      idpIssueDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("YYYY-MM-DD date the IDP was issued (valid 1 year)."),
+      licenseExpiry: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("YYYY-MM-DD expiry of the home license."),
+      monthsInIssuingCountry: z.number().min(0).max(1200).optional().describe("Conversion: total months lived in the issuing country after getting the license (3+ needed)."),
+      age: z.number().min(0).max(120).optional().describe("Driver's age."),
+      today: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("YYYY-MM-DD date to check (default: today in Japan)."),
+    }),
+    example: { country: "US", usState: "CA", document: "idp", entryDate: "2026-11-01", idpIssueDate: "2026-06-15" },
   },
 ];
 
