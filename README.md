@@ -2,10 +2,10 @@
 
 <!-- mcp-name: io.github.sean0007/free-agent-tools -->
 
-A free, no-auth **remote MCP server** (streamable HTTP) with 31 small, deterministic tools your AI agent can call:
+A free, no-auth **remote MCP server** (streamable HTTP) with 32 small, deterministic tools your AI agent can call:
 startup pitch roasting, business idea scoring, price headroom, hotel OTA commission, open-source swaps for SaaS bills,
 Google Ads / Meta Ads notice risk, App Store 4.2 / 4.3 precheck, faceless YouTube reality check,
-AI infrastructure bottlenecks, viral attention patterns, Japan trip planning, Japan tax-free refund checking, Japan visa / residence permit fees, Japan luggage rules / forwarding cost, the Kyushu travel discount (九州ふっこう応援割), the Japan customs duty-free allowance on arrival, Japan pre-entry TB screening (JPETS), Japan dual pricing (resident vs non-resident prices), a Japan emergency alert decoder (緊急地震速報, tsunami, the level-named warnings since 2026-05-29, 避難指示, J-ALERT), a Japan permanent residence (永住) guideline check for the 2026-10-01 revision, a Japan international postage calculator (Japan Post prices now vs from 2027-02-01), a Japan re-entry deadline check (みなし再入国 / re-entry permit / pending renewal), and a Japan overseas dependents check (国外居住親族: age bands, ¥380,000 remittance rule, 2026 income limit), a Japan part-time work check (資格外活動許可: which statuses may take which jobs, 28-hour rule with rolling 7-day windows, the 2026-10-01 pachinko change for dependents), and a Japan driving check (Geneva IDP vs translation vs no route by country, 1-year and 3-month rules, 外免切替 after 2025-10-01).
+AI infrastructure bottlenecks, viral attention patterns, Japan trip planning, Japan tax-free refund checking, Japan visa / residence permit fees, Japan luggage rules / forwarding cost, the Kyushu travel discount (九州ふっこう応援割), the Japan customs duty-free allowance on arrival, Japan pre-entry TB screening (JPETS), Japan dual pricing (resident vs non-resident prices), a Japan emergency alert decoder (緊急地震速報, tsunami, the level-named warnings since 2026-05-29, 避難指示, J-ALERT), a Japan permanent residence (永住) guideline check for the 2026-10-01 revision, a Japan international postage calculator (Japan Post prices now vs from 2027-02-01), a Japan re-entry deadline check (みなし再入国 / re-entry permit / pending renewal), and a Japan overseas dependents check (国外居住親族: age bands, ¥380,000 remittance rule, 2026 income limit), a Japan part-time work check (資格外活動許可: which statuses may take which jobs, 28-hour rule with rolling 7-day windows, the 2026-10-01 pachinko change for dependents), a Japan driving check (Geneva IDP vs translation vs no route by country, 1-year and 3-month rules, 外免切替 after 2025-10-01), and an Airbnb house rules check (likely-not-allowed rules and checkout tasks for bookings from 2026-11-20, rewrites, Japan 民泊 guest-register exceptions).
 
 **Endpoint:** `https://free-agent-tools.vercel.app/mcp`  
 **Landing page with setup for every client:** https://free-agent-tools.vercel.app
@@ -84,6 +84,7 @@ claude mcp add --transport http free-agent-tools https://free-agent-tools.vercel
 | `japan_overseas_dependents_check` | Claiming a relative living outside Japan as a dependent (国外居住親族): age 16-29 / 30-69 / 70+ rules, ¥380,000 remittance test, 2026 ¥620,000 income limit, deduction amount, tax saving, proof documents |
 | `japan_parttime_work_check` | Can a foreign resident do this part-time job / side gig on their Japanese status (資格外活動許可): comprehensive 28-hour vs individual permission, rolling 7-day hours, students' 8 h/day vacation rule, banned 風俗営業 venues, 2026-10-01 pachinko/game-center change for Dependent holders |
 | `japan_driving_check` | Can you drive in Japan on a foreign license: Geneva IDP vs Japanese translation vs no route by country (NPA list, May 2026), last driving day (1 year from landing, IDP validity, 3-month rule), 外免切替 eligibility, test exemptions (incl. US states), documents, fees |
+| `airbnb_house_rules_check` | Which Airbnb house rules / checkout tasks are likely not allowed for reservations booked from 2026-11-20 (dishes, stripping beds, trash off-site, fines, fees, amenity limits, contracts, ID, off-platform, rules after booking), EN/JA rewrites, standard rules to set, Japan guest-register (宿泊者名簿・旅券の写し) exception |
 
 All tools are read-only and idempotent.
 
@@ -117,6 +118,7 @@ Every tool is also a free JSON API (GET or POST, CORS open, OpenAPI 3.1, `/.well
 | [Japan Overseas Dependents Check](https://japan-overseas-dependents.vercel.app) | https://japan-overseas-dependents.vercel.app/openapi.json |
 | [Japan Part-time Work Check](https://japan-parttime-check.vercel.app) | https://japan-parttime-check.vercel.app/openapi.json |
 | [Japan Driving Check](https://japan-driving-check.vercel.app) | https://japan-driving-check.vercel.app/openapi.json |
+| [House Rules Check](https://house-rules-check.vercel.app) | https://house-rules-check.vercel.app/openapi.json |
 
 ## Test it
 

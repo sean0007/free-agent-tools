@@ -29,6 +29,7 @@ export const SITES: Record<string, SiteInfo> = {
   dependents: { id: "dependents", name: "Japan Overseas Dependents Check", url: "https://japan-overseas-dependents.vercel.app", blurb: "Can you claim a relative living outside Japan as a dependent (国外居住親族)? Age-band rules (30-69 need study abroad, disability or ¥380,000+ remitted), 2026 ¥620,000 income limit, deduction amounts, tax saving, remittance proof and the 3+ payment statement." },
   parttime: { id: "parttime", name: "Japan Part-time Work Check", url: "https://japan-parttime-check.vercel.app", blurb: "Can a foreign resident do this part-time job or side gig on their Japanese status (資格外活動許可)? Comprehensive 28-hour vs individual permission, rolling 7-day hours, students' 8 h/day vacation rule, and the 2026-10-01 pachinko/game-center change for Dependent holders." },
   driving: { id: "driving", name: "Japan Driving Check", url: "https://japan-driving-check.vercel.app", blurb: "Can you drive in Japan on your foreign license? Geneva IDP vs Japanese translation (Germany, Switzerland, France, Belgium, Monaco, Taiwan) vs no route, your last driving day (1 year from landing, IDP validity, 3-month rule), and 外免切替 conversion after the 2025-10-01 changes." },
+  houserules: { id: "houserules", name: "House Rules Check", url: "https://house-rules-check.vercel.app", blurb: "Are your Airbnb house rules allowed for reservations booked from 2026-11-20? Line-by-line EN/JA check (dishes, stripping beds, trash off-site, fines, fees, AC limits, contracts, ID, off-platform check-in, rules added after booking), rewrites, the 7 standard rules, and Japan 民泊/旅館業 guest-register exceptions. Not affiliated with Airbnb." },
   customs: { id: "customs", name: "Japan Customs Allowance Checker", url: "https://japan-customs-allowance.vercel.app", blurb: "Japan duty-free allowance on arrival: alcohol, tobacco, perfume, ¥200,000 goods, simplified duty in yen, cash over ¥1M declaration." },
 };
 
@@ -582,6 +583,23 @@ export const TOOLS: ToolDef[] = [
       today: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("YYYY-MM-DD date to check (default: today in Japan)."),
     }),
     example: { country: "US", usState: "CA", document: "idp", entryDate: "2026-11-01", idpIssueDate: "2026-06-15" },
+  },
+  {
+    name: "airbnb_house_rules_check",
+    title: "Which of these Airbnb house rules are likely not allowed under the policy for reservations booked from 2026-11-20, and how should they be rewritten?",
+    description:
+      "Checks pasted short-term-rental house rules / checkout requests (English or Japanese, one per line) against keyword patterns built from Airbnb's help article 4168 and its 2026-10-20 announcement (rules as of 2026-10-28; policy covers reservations booked on or after 2026-11-20). Per rule: likely_flagged (cleaner tasks: washing/putting away dishes, dishwasher, stripping beds, laundry, vacuuming, taking trash off-site; fines, penalties, late-checkout fees, deposit deductions; restricting advertised amenities such as AC or hot tub; separate contracts or waivers; ID / personal info; off-platform apps or forms; new rules by message, sign or in person), review, move_to_section (mandatory fees → Pricing, HOA/local-government fines → Local rules, check-in times), legal_exception (Japan: 宿泊者名簿 guest register and passport copy for foreign guests without a Japan address under 住宅宿泊事業法 art. 8 / 旅館業法 art. 6, if disclosed in Requests before booking), use_standard_rule (max guests, quiet hours, events, pets, smoking, commercial photography, lock up), likely_ok (dishes in the sink, gather towels, sort trash into indoor bins, turn off AC, optional priced add-ons, safety info, local exceptions like bear-proof bins) or no_match. Returns verdict (fix_needed | review_needed | tidy_up | looks_ok), headline, summary, policy {appliesToBookingsFrom, appliesToThisBooking, daysUntilPolicy}, counts, items [{text, finding, reasons, reasonsJa, rewrite, moveTo, japanNote}], standardRulesToSet, japanChecklist (art. 9 explanation duty, minpaku trash is business waste), sources, disclaimer. Use for 'can I still ask Airbnb guests to do dishes / strip beds / take out trash', 'Airbnb house rules change November 2026', 'Airbnb late checkout fee allowed', エアビー ハウスルール 変更, 民泊 パスポート 写し Airbnb. Educational keyword check, likely outcomes only; not affiliated with Airbnb, which decides.",
+    site: "houserules",
+    path: "/api/check",
+    inputSchema: z.object({
+      text: z.string().min(2).max(8000).describe("House rules / requests to check, one per line (English or Japanese). Max 8000 chars, 80 rules."),
+      jurisdiction: z.enum(["JP", "other"]).optional().describe("JP (default) adds Japan legal exceptions (guest register, passport copy) and notes; other = generic."),
+      lodging: z.enum(["minpaku", "ryokan", "unknown"]).optional().describe("Japan licence: minpaku (住宅宿泊事業法) | ryokan (旅館業法: hotel, ryokan, 簡易宿所) | unknown (default)."),
+      channel: z.enum(["listing", "message", "sign", "in_person"]).optional().describe("Where guests see the rules: listing (default, House rules and requests) | message | sign | in_person. Outside the listing can't add new rules."),
+      bookingDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("YYYY-MM-DD date the reservation was booked (policy covers bookings on or after 2026-11-20)."),
+      today: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("YYYY-MM-DD (default: today in Japan)."),
+    }),
+    example: { text: "Please wash the dishes before checkout.\nNo smoking, $250 fine.\nQuiet hours 10pm-8am.", jurisdiction: "other" },
   },
 ];
 

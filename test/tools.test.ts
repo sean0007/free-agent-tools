@@ -118,10 +118,7 @@ test("japan_parttime_work_check on the parttime site", async () => {
   assert.equal(t.inputSchema.safeParse({ status: "student" }).success, false);
 });
 
-test("31 tools, v1.15.0, japan_driving_check on the driving site", async () => {
-  assert.equal(TOOLS.length, 31);
-  const { readFileSync } = await import("node:fs");
-  for (const f of ["package.json", "server.json", "public/server.json"]) assert.equal(JSON.parse(readFileSync(f, "utf8")).version, "1.15.0", f);
+test("japan_driving_check on the driving site", async () => {
   const t = TOOLS.find((x) => x.name === "japan_driving_check");
   assert.ok(t);
   assert.equal(SITES[t.site].url, "https://japan-driving-check.vercel.app");
@@ -130,4 +127,18 @@ test("31 tools, v1.15.0, japan_driving_check on the driving site", async () => {
   assert.equal(t.inputSchema.safeParse({ country: "AU", residency: "resident", entryDate: "2025-11-01", trips: "2026-06-01_2026-09-01", monthsInIssuingCountry: 24 }).success, true);
   assert.equal(t.inputSchema.safeParse({ country: "US", entryDate: "next week" }).success, false);
   assert.equal(t.inputSchema.safeParse({ document: "idp" }).success, false);
+});
+
+test("32 tools, v1.16.0, airbnb_house_rules_check on the houserules site", async () => {
+  assert.equal(TOOLS.length, 32);
+  const { readFileSync } = await import("node:fs");
+  for (const f of ["package.json", "server.json", "public/server.json"]) assert.equal(JSON.parse(readFileSync(f, "utf8")).version, "1.16.0", f);
+  const t = TOOLS.find((x) => x.name === "airbnb_house_rules_check");
+  assert.ok(t);
+  assert.equal(SITES[t.site].url, "https://house-rules-check.vercel.app");
+  assert.equal(t.path, "/api/check");
+  assert.equal(t.inputSchema.safeParse(t.example).success, true);
+  assert.equal(t.inputSchema.safeParse({ text: "ゴミは集積所に出してください。", lodging: "minpaku", bookingDate: "2026-11-25" }).success, true);
+  assert.equal(t.inputSchema.safeParse({ text: "No pets", bookingDate: "next week" }).success, false);
+  assert.equal(t.inputSchema.safeParse({ jurisdiction: "JP" }).success, false);
 });
