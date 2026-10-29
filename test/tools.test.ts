@@ -129,10 +129,7 @@ test("japan_driving_check on the driving site", async () => {
   assert.equal(t.inputSchema.safeParse({ document: "idp" }).success, false);
 });
 
-test("32 tools, v1.16.0, airbnb_house_rules_check on the houserules site", async () => {
-  assert.equal(TOOLS.length, 32);
-  const { readFileSync } = await import("node:fs");
-  for (const f of ["package.json", "server.json", "public/server.json"]) assert.equal(JSON.parse(readFileSync(f, "utf8")).version, "1.16.0", f);
+test("airbnb_house_rules_check on the houserules site", async () => {
   const t = TOOLS.find((x) => x.name === "airbnb_house_rules_check");
   assert.ok(t);
   assert.equal(SITES[t.site].url, "https://house-rules-check.vercel.app");
@@ -141,4 +138,19 @@ test("32 tools, v1.16.0, airbnb_house_rules_check on the houserules site", async
   assert.equal(t.inputSchema.safeParse({ text: "ゴミは集積所に出してください。", lodging: "minpaku", bookingDate: "2026-11-25" }).success, true);
   assert.equal(t.inputSchema.safeParse({ text: "No pets", bookingDate: "next week" }).success, false);
   assert.equal(t.inputSchema.safeParse({ jurisdiction: "JP" }).success, false);
+});
+
+test("33 tools, v1.17.0, japan_my_number_card_expiry_check on the mynumber site", async () => {
+  assert.equal(TOOLS.length, 33);
+  const { readFileSync } = await import("node:fs");
+  for (const f of ["package.json", "server.json", "public/server.json"]) assert.equal(JSON.parse(readFileSync(f, "utf8")).version, "1.17.0", f);
+  const t = TOOLS.find((x) => x.name === "japan_my_number_card_expiry_check");
+  assert.ok(t);
+  assert.equal(SITES[t.site].url, "https://japan-mynumber-card-check.vercel.app");
+  assert.equal(t.path, "/api/check");
+  assert.equal(t.inputSchema.safeParse(t.example).success, true);
+  assert.equal(t.inputSchema.safeParse({ holder: "japanese", birthDate: "1985-01-20", cardIssueDate: "2017-02-01" }).success, true);
+  assert.equal(t.inputSchema.safeParse({ holder: "mid_long", birthDate: "1992-04-10", cardIssueDate: "2024-03-01", residenceExpiry: "2026-12-15", renewal: "granted", newResidenceExpiry: "2031-12-15", specificCard: false }).success, true);
+  assert.equal(t.inputSchema.safeParse({ holder: "tourist", birthDate: "1992-04-10", cardIssueDate: "2024-03-01" }).success, false);
+  assert.equal(t.inputSchema.safeParse({ holder: "japanese", birthDate: "April 1992", cardIssueDate: "2024-03-01" }).success, false);
 });

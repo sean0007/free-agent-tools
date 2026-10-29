@@ -30,6 +30,7 @@ export const SITES: Record<string, SiteInfo> = {
   parttime: { id: "parttime", name: "Japan Part-time Work Check", url: "https://japan-parttime-check.vercel.app", blurb: "Can a foreign resident do this part-time job or side gig on their Japanese status (資格外活動許可)? Comprehensive 28-hour vs individual permission, rolling 7-day hours, students' 8 h/day vacation rule, and the 2026-10-01 pachinko/game-center change for Dependent holders." },
   driving: { id: "driving", name: "Japan Driving Check", url: "https://japan-driving-check.vercel.app", blurb: "Can you drive in Japan on your foreign license? Geneva IDP vs Japanese translation (Germany, Switzerland, France, Belgium, Monaco, Taiwan) vs no route, your last driving day (1 year from landing, IDP validity, 3-month rule), and 外免切替 conversion after the 2025-10-01 changes." },
   houserules: { id: "houserules", name: "House Rules Check", url: "https://house-rules-check.vercel.app", blurb: "Are your Airbnb house rules allowed for reservations booked from 2026-11-20? Line-by-line EN/JA check (dishes, stripping beds, trash off-site, fines, fees, AC limits, contracts, ID, off-platform check-in, rules added after booking), rewrites, the 7 standard rules, and Japan 民泊/旅館業 guest-register exceptions. Not affiliated with Airbnb." },
+  mynumber: { id: "mynumber", name: "Japan My Number Card Check", url: "https://japan-mynumber-card-check.vercel.app", blurb: "When does your My Number Card (マイナンバーカード) expire and what do you do before then? Foreign residents: the card ends with the period of stay and is not extended by a visa renewal (city-hall deadline, one-time 2-month extension while pending, 10th-birthday cap, 特定在留カード). Japanese / PR / SPR: 10th or 5th birthday, renewal window, e-certificate and マイナ保険証 grace." },
   customs: { id: "customs", name: "Japan Customs Allowance Checker", url: "https://japan-customs-allowance.vercel.app", blurb: "Japan duty-free allowance on arrival: alcohol, tobacco, perfume, ¥200,000 goods, simplified duty in yen, cash over ¥1M declaration." },
 };
 
@@ -600,6 +601,29 @@ export const TOOLS: ToolDef[] = [
       today: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("YYYY-MM-DD (default: today in Japan)."),
     }),
     example: { text: "Please wash the dishes before checkout.\nNo smoking, $250 fine.\nQuiet hours 10pm-8am.", jurisdiction: "other" },
+  },
+  {
+    name: "japan_my_number_card_expiry_check",
+    title: "When does this Japan My Number Card expire, and what must the holder do (and by when) to keep it valid?",
+    description:
+      "Calculates Japan My Number Card (マイナンバーカード / Individual Number Card) validity from the ordinance (個人番号カード等に関する命令 art. 26, 27, 29; e-Gov, rules as of 2026-10-29) plus Digital Agency, ISA, Mynaportal and city guidance. holder: mid_long (foreign resident with a period of stay: work, student, spouse, etc.) | permanent | hsp2 | spr | japanese. Foreign residents with a period of stay: card expires on the period-of-stay expiry (under-18s: earlier of that and the 5th birthday), is NOT extended automatically by a visa renewal and no reminder is sent; after a grant the city extends it free if done BEFORE the old date, up to the 10th birthday after the card was made (5th if under 18). renewal=pending: one-time special extension to expiry + 2 months with proof (更新申請中 stamp, online completion email, receipt). 特定在留カード (since 2026-06-14): new card from ISA = no city-hall visit, pending = still extend at city hall. Japanese / PR / HSP2 / SPR: 10th birthday after issue (5th if under 18; age line 20 for cards made by 2022-03-31; Feb 29 → Feb 28), renewal from the day fewer than 3 months remain, new card to the 11th / 6th birthday. Also e-certificate expiry (5th birthday, capped at the card), マイナ保険証 grace (end of the 3rd month after the e-cert expiry month) and PR / HSP2 residence-card dates (7 years if issued by 2026-06-13, else 10th birthday). Returns verdict (ok | renew_window_open | extend_before_expiry | no_action_needed | expired), summary, card {expiry, expiryBasis, daysLeft, renewFrom, maxExtendableTo, newExpiryAfterAction}, specialExtension {applies, extendTo, mustApplyBy}, ecert {expiry, renewFrom, status, insuranceGraceEnds}, residenceCard, actions [{what, from, by, where, fee}], warnings, sources, disclaimer. Never send a My Number itself. Use for 'my My Number Card expires with my visa', 'マイナンバーカード 在留期間 更新 延長', 'My Number Card renewal pending visa', 'マイナンバーカード 有効期限 いつ', 'マイナ保険証 電子証明書 切れた'. Educational date calculator, not legal advice; not affiliated with the Digital Agency, J-LIS, ISA or any city office; the date on the card and the city office decide.",
+    site: "mynumber",
+    path: "/api/check",
+    inputSchema: z.object({
+      holder: z.enum(["mid_long", "permanent", "hsp2", "spr", "japanese"]).describe("mid_long = foreign resident with a period of stay (work, student, spouse, dependent, etc.) | permanent | hsp2 (Highly Skilled Professional ii) | spr (special permanent resident) | japanese."),
+      birthDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).describe("YYYY-MM-DD date of birth."),
+      cardIssueDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).describe("YYYY-MM-DD date the current card was made (作成日 / issue date)."),
+      residenceExpiry: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("mid_long: YYYY-MM-DD period-of-stay expiry the card currently shows (在留期間の満了日). Required for mid_long."),
+      renewal: z.enum(["none", "pending", "granted"]).optional().describe("Visa renewal / change of status: none (default) | pending (applied, no decision yet) | granted (new residence card received)."),
+      newResidenceExpiry: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("renewal=granted: YYYY-MM-DD new period-of-stay expiry."),
+      specificCard: z.boolean().optional().describe("true if the card is a 特定在留カード (combined residence card + My Number Card, since 2026-06-14)."),
+      cardExpiry: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("Optional YYYY-MM-DD expiry printed on the card (overrides the calculation)."),
+      ecertExpiry: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("Optional YYYY-MM-DD electronic-certificate expiry, if known."),
+      issuedAsRenewal: z.boolean().optional().describe("true if the card was made in the 3-month renewal window (runs to the 11th / 6th birthday)."),
+      residenceCardExpiry: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("permanent / hsp2: optional YYYY-MM-DD residence-card expiry."),
+      today: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("YYYY-MM-DD (default: today in Japan)."),
+    }),
+    example: { holder: "mid_long", birthDate: "1992-04-10", cardIssueDate: "2024-03-01", residenceExpiry: "2026-12-15", renewal: "pending" },
   },
 ];
 
