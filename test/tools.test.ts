@@ -140,10 +140,7 @@ test("airbnb_house_rules_check on the houserules site", async () => {
   assert.equal(t.inputSchema.safeParse({ jurisdiction: "JP" }).success, false);
 });
 
-test("33 tools, v1.17.0, japan_my_number_card_expiry_check on the mynumber site", async () => {
-  assert.equal(TOOLS.length, 33);
-  const { readFileSync } = await import("node:fs");
-  for (const f of ["package.json", "server.json", "public/server.json"]) assert.equal(JSON.parse(readFileSync(f, "utf8")).version, "1.17.0", f);
+test("japan_my_number_card_expiry_check on the mynumber site", async () => {
   const t = TOOLS.find((x) => x.name === "japan_my_number_card_expiry_check");
   assert.ok(t);
   assert.equal(SITES[t.site].url, "https://japan-mynumber-card-check.vercel.app");
@@ -153,4 +150,20 @@ test("33 tools, v1.17.0, japan_my_number_card_expiry_check on the mynumber site"
   assert.equal(t.inputSchema.safeParse({ holder: "mid_long", birthDate: "1992-04-10", cardIssueDate: "2024-03-01", residenceExpiry: "2026-12-15", renewal: "granted", newResidenceExpiry: "2031-12-15", specificCard: false }).success, true);
   assert.equal(t.inputSchema.safeParse({ holder: "tourist", birthDate: "1992-04-10", cardIssueDate: "2024-03-01" }).success, false);
   assert.equal(t.inputSchema.safeParse({ holder: "japanese", birthDate: "April 1992", cardIssueDate: "2024-03-01" }).success, false);
+});
+
+test("34 tools, v1.18.0, japan_hsp_points_check on the hsp site", async () => {
+  assert.equal(TOOLS.length, 34);
+  const { readFileSync } = await import("node:fs");
+  for (const f of ["package.json", "server.json", "public/server.json"]) assert.equal(JSON.parse(readFileSync(f, "utf8")).version, "1.18.0", f);
+  const t = TOOLS.find((x) => x.name === "japan_hsp_points_check");
+  assert.ok(t);
+  assert.equal(SITES[t.site].url, "https://japan-hsp-points.vercel.app");
+  assert.equal(t.path, "/api/check");
+  assert.equal(t.inputSchema.safeParse(t.example).success, true);
+  assert.equal(t.inputSchema.safeParse({ category: "management", education: "mba", experienceYears: 10, annualSalaryMan: 1500, position: "representative" }).success, true);
+  assert.equal(t.inputSchema.safeParse({ category: "academic", age: 36, education: "doctor", experienceYears: 7, annualSalary: 6500000, researchItems: 2, japaneseDegree: true }).success, true);
+  assert.equal(t.inputSchema.safeParse({ category: "engineer", education: "master" }).success, false);
+  assert.equal(t.inputSchema.safeParse({ category: "specialized", education: "phd" }).success, false);
+  assert.equal(t.inputSchema.safeParse({ category: "specialized", education: "master", birthDate: "1990/01/01" }).success, false);
 });
