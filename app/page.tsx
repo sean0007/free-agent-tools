@@ -140,12 +140,14 @@ export default function Home() {
         </details>
       ))}
 
+      <p className="small">Using the Japan tools at work? <a href="/pro">Tell us which paid add-on you&apos;d use</a> (planned, nothing for sale, no signup).</p>
+
       <h2>Test it</h2>
       <pre>{`npx @modelcontextprotocol/inspector --cli ${MCP_URL} --transport http --method tools/list`}</pre>
 
       <footer>
         Source: <a href="https://github.com/sean0007/free-agent-tools">github.com/sean0007/free-agent-tools</a> (MIT) ·{" "}
-        <a href="/llms.txt">llms.txt</a> · <a href="/server.json">server.json</a>
+        <a href="/llms.txt">llms.txt</a> · <a href="/server.json">server.json</a> · <a href="/pro">Pro (planned)</a>
         <br />
         Not affiliated with Anthropic, OpenAI, Google, Meta, Apple, or any company named in tool results.
       </footer>
