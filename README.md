@@ -124,6 +124,10 @@ Every tool is also a free JSON API (GET or POST, CORS open, OpenAPI 3.1, `/.well
 | [Japan My Number Card Check](https://japan-mynumber-card-check.vercel.app) | https://japan-mynumber-card-check.vercel.app/openapi.json |
 | [Japan HSP Points Calculator](https://japan-hsp-points.vercel.app) | https://japan-hsp-points.vercel.app/openapi.json |
 
+## Japan rules index (machine-readable)
+
+One file with the thresholds, fees, effective dates and official sources behind every Japan rule tool: [/rules.json](https://free-agent-tools.vercel.app/rules.json) (human-readable: [/rules.md](https://free-agent-tools.vercel.app/rules.md)). It is copied from each tool's own `/api/rules`, which stays the live source of truth; rebuild with `python3 scripts/build-rules-index.py`. Educational summaries, not legal, tax or immigration advice.
+
 ## Test it
 
 ```bash

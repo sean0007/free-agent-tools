@@ -17,6 +17,9 @@ ${TOOLS.map((t) => `- ${t.name}: ${t.description}`).join("\n")}
 ## Plain JSON APIs (same tools, GET or POST, CORS open)
 ${Object.values(SITES).map((s) => `- ${s.name}: ${s.url} (OpenAPI: ${s.url}/openapi.json, llms.txt: ${s.url}/llms.txt)`).join("\n")}
 
+## Japan rules index (machine-readable)
+- ${SERVER_URL}/rules.json: thresholds, fees, effective dates and official sources behind every Japan rule tool, copied from each tool's /api/rules (human-readable: ${SERVER_URL}/rules.md)
+
 ## Rules for agents
 - Every result has a disclaimer field. Pass it on to the user.
 - Results are rules of thumb and educational estimates, not financial, legal, or investment advice.
