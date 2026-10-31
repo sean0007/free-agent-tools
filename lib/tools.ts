@@ -32,6 +32,7 @@ export const SITES: Record<string, SiteInfo> = {
   houserules: { id: "houserules", name: "House Rules Check", url: "https://house-rules-check.vercel.app", blurb: "Are your Airbnb house rules allowed for reservations booked from 2026-11-20? Line-by-line EN/JA check (dishes, stripping beds, trash off-site, fines, fees, AC limits, contracts, ID, off-platform check-in, rules added after booking), rewrites, the 7 standard rules, and Japan 民泊/旅館業 guest-register exceptions. Not affiliated with Airbnb." },
   mynumber: { id: "mynumber", name: "Japan My Number Card Check", url: "https://japan-mynumber-card-check.vercel.app", blurb: "When does your My Number Card (マイナンバーカード) expire and what do you do before then? Foreign residents: the card ends with the period of stay and is not extended by a visa renewal (city-hall deadline, one-time 2-month extension while pending, 10th-birthday cap, 特定在留カード). Japanese / PR / SPR: 10th or 5th birthday, renewal window, e-certificate and マイナ保険証 grace." },
   hsp: { id: "hsp", name: "Japan HSP Points Calculator", url: "https://japan-hsp-points.vercel.app", blurb: "Highly Skilled Professional (高度専門職 / 高度人材ポイント) points for academic, specialized and management work: the full ISA points table with its no-double-count rules, 70 vs 80 (the 3-year vs 1-year permanent residence fast track), the ¥3M salary floor, what could add points, and J-Skip. Rules as of 2026-10-30; a revision is being discussed but nothing is published yet." },
+  pet: { id: "pet", name: "Japan Pet Quarantine Check", url: "https://japan-pet-quarantine.vercel.app", blurb: "Bringing a dog, cat or rabbit into Japan, taking one out, or leaving and coming back: microchip → 2 rabies shots → antibody test → 180-day wait, the 40-day AQS notice, the vet check 10 days before boarding, designated regions (Hawaii, Guam, AU, NZ, Fiji, Iceland), the short-stay route, detention days if you arrive early, and the 14-day export application that becomes mandatory for dogs and rabbits from 2027-01-01. Rules as of 2026-10-31 (MAFF Animal Quarantine Service)." },
   customs: { id: "customs", name: "Japan Customs Allowance Checker", url: "https://japan-customs-allowance.vercel.app", blurb: "Japan duty-free allowance on arrival: alcohol, tobacco, perfume, ¥200,000 goods, simplified duty in yen, cash over ¥1M declaration." },
 };
 
@@ -660,6 +661,35 @@ export const TOOLS: ToolDef[] = [
       localGovSupport: z.boolean().optional().describe("Employer gets local-government support for hiring highly skilled foreigners (10)."),
     }),
     example: { category: "specialized", age: 31, education: "master", experienceYears: 4, annualSalary: 7500000, japanese: "n2", qualifications: 1 },
+  },
+  {
+    name: "japan_pet_quarantine_check",
+    title: "When can this dog, cat or rabbit fly into (or out of) Japan without quarantine detention, and what are the deadlines?",
+    description:
+      "Calculates Japan pet import / export / round-trip quarantine dates for dogs, cats and rabbits from the MAFF Animal Quarantine Service (AQS) rules, rules as of 2026-10-31. direction: import (bring a pet into Japan) | export (take it out of Japan) | return (leave Japan with the pet and come back: the short-stay route prepared before departure). species: dog | cat | rabbit. Non-designated regions (most countries incl. the US mainland, UK, EU, China, Korea): ISO 15-digit microchip first, then 2 rabies vaccinations (91+ days old, the 2nd after 30 days and within the 1st's validity), antibody blood test at a MAFF-designated lab (≥0.5 IU/ml, valid 2 years), then wait 180 days from the blood draw; arriving earlier means detention at the airport quarantine for the remaining days (up to 180). Designated regions (Iceland, Australia, New Zealand, Fiji, Hawaii, Guam): microchip + residence since birth or 180+ days (else detention for the difference). Always: notify AQS 40+ days before arrival, vet inspection and certificate within 10 days before boarding, ≤12h inspection on arrival when everything matches, register a dog with the city within 30 days. Short-stay return: prepare in Japan before leaving, return within the antibody's 2 years, no 180-day wait. Export: the 14-day-before application becomes MANDATORY for dogs and rabbits departing from 2027-01-01 (AQS asks for it for cats too). Returns verdict (on_track | plan | quarantine_risk | deadline_passed | redo_required), summary, steps [{step, date, status, rule}], dates {earliestArrival, antibodyValidUntil, notifyAqsBy, preDepartureInspectionFrom/To, exportApplyBy, registerDogBy}, exportApplication {mandatory}, quarantine {expected, days, reason}, fastestPlan (from today when nothing is done yet), actions, warnings (microchip format, vaccine gaps), ports (airports / seaports that accept dogs and cats), sources, disclaimer. Use for 'bring my dog to Japan', '犬 日本 輸入 180日', 'cat import Japan quarantine', 'Japan pet 40 days notice', 'ペット 輸出 14日前 義務化 2027', 'take my dog out of Japan and come back'. Educational date calculator, not veterinary or legal advice; not affiliated with MAFF / AQS; AQS and the destination country decide.",
+    site: "pet",
+    path: "/api/check",
+    inputSchema: z.object({
+      direction: z.enum(["import", "export", "return"]).describe("import = bring a pet into Japan | export = take it out of Japan | return = leave Japan with the pet and come back (short-stay route)."),
+      species: z.enum(["dog", "cat", "rabbit"]).describe("dog | cat | rabbit."),
+      country: z.string().optional().describe("import: country / region the pet comes from (ISO code or name, e.g. US, GB, AU, Hawaii). Designated regions are detected automatically."),
+      origin: z.enum(["other", "designated"]).optional().describe("Override: designated (Iceland, Australia, NZ, Fiji, Hawaii, Guam) | other."),
+      birthDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("Pet's birth date YYYY-MM-DD (rabies shot 1 must be at 91+ days old)."),
+      microchipDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("Microchip implant date (must be on or before vaccine 1)."),
+      microchipNumber: z.string().optional().describe("Optional chip number to check the ISO 15-digit format."),
+      vaccine1Date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("1st rabies vaccination (after the microchip)."),
+      vaccine1ValidUntil: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("Validity end of vaccine 1 (default 1 year)."),
+      vaccine2Date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("2nd rabies vaccination (30+ days after the 1st, within its validity)."),
+      vaccineValidUntil: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("Validity end of the latest vaccine (for booster warnings)."),
+      bloodDrawDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("Antibody (FAVN) blood draw date at a MAFF-designated lab; the 180 days count from this."),
+      titer: z.number().nonnegative().optional().describe("Antibody result in IU/ml (pass ≥ 0.5)."),
+      residentSince: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("Designated region: date the pet started living there."),
+      residentSinceBirth: z.boolean().optional().describe("Designated region: lived there since birth."),
+      arrivalDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("Planned arrival in Japan YYYY-MM-DD (required for designated imports and once a blood draw is given)."),
+      departureDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("export / return: departure from Japan YYYY-MM-DD."),
+      today: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("Override today's date (default: today in Japan)."),
+    }),
+    example: { direction: "import", species: "dog", country: "US", birthDate: "2026-03-01", microchipDate: "2026-06-10", vaccine1Date: "2026-06-10", vaccine2Date: "2026-07-20", bloodDrawDate: "2026-08-05", titer: 2.1, arrivalDate: "2027-06-15" },
   },
 ];
 

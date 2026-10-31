@@ -1,7 +1,7 @@
 {
  "name": "Japan rules index (Free Agent Tools)",
  "version": 1,
- "generatedAt": "2026-10-31T09:08+09:00",
+ "generatedAt": "2026-10-31T12:44+09:00",
  "description": "Thresholds, fees, dates and official sources behind each free Japan rule-check tool, copied from each tool's own /api/rules. Each tool's rulesEndpoint is the live source of truth.",
  "license": "MIT (data facts from official Japanese government and company sources linked per tool)",
  "disclaimer": "Educational summaries, not legal, tax or immigration advice. Rules change; confirm with the official source linked for each rule before relying on it.",
@@ -13506,6 +13506,99 @@
     "disclaimer": "Educational guide, not legal or immigration advice, not affiliated with the Immigration Services Agency of Japan (ISA). Only the permission stamp on your residence card / passport and the ISA decide what you may do. Unauthorized work can lead to refusal of renewal, criminal penalties and deportation, and employers can be punished too. Confirm with your Regional Immigration Services Bureau, the Immigration Information Center (外国人在留総合インフォメーションセンター, 0570-013904), your school, or a licensed gyoseishoshi before you start.",
     "docs": "https://japan-parttime-check.vercel.app/openapi.json",
     "checker": "https://japan-parttime-check.vercel.app/api/check"
+   }
+  },
+  {
+   "id": "japan-pet-quarantine",
+   "name": "Japan Pet Quarantine Check",
+   "site": "https://japan-pet-quarantine.vercel.app",
+   "rulesEndpoint": "https://japan-pet-quarantine.vercel.app/api/rules",
+   "checkEndpoint": "https://japan-pet-quarantine.vercel.app/openapi.json",
+   "rulesAsOf": "2026-10-31",
+   "effective": null,
+   "officialSources": [
+    "https://www.maff.go.jp/aqs/english/animal/dog/import-other.html",
+    "https://www.maff.go.jp/aqs/english/animal/dog/import-free.html",
+    "https://www.maff.go.jp/aqs/english/animal/dog/export.html",
+    "https://www.maff.go.jp/aqs/animal/dog/shortstay.html",
+    "https://www.maff.go.jp/aqs/animal/index.html",
+    "https://www.maff.go.jp/aqs/english/qanda/dogcata.html",
+    "https://www.maff.go.jp/aqs/animal/dog/lab.html",
+    "https://laws.e-gov.go.jp/law/411M50000200068"
+   ],
+   "rules": {
+    "rulesAsOf": "2026-10-31",
+    "importFromNonDesignatedRegions": {
+     "steps": [
+      "Microchip ISO 11784/11785 (15 digits), on or before the first rabies shot. 900202… chips not accepted; some 900-prefix chips duplicated: notify AQS early.",
+      "Rabies vaccine #1 at 91+ days old (birth = day 0), after the chip; inactivated or recombinant only (no live / RNA).",
+      "Vaccine #2: 30+ days after #1 (#1 = day 0) and within #1's effective period (duration of immunity).",
+      "Blood draw on or after the #2 day, within the vaccine's effective period; MAFF-designated lab; ≥0.5 IU/ml; valid 2 years from the draw.",
+      "Wait 180 days from the draw (draw = day 0) in the exporting country. Arrival also within the antibody validity and vaccine effective period (boosters on time).",
+      "Advance notification to AQS at the arrival port 40+ days before arrival (NACCS / email). Later notices in principle not accepted; arrival cannot be moved earlier.",
+      "Clinical inspection within 10 days before boarding (rabies; dogs also leptospirosis); government-endorsed certificate (Form AC).",
+      "Import inspection on arrival: ≤12 h if all is in order; otherwise detention up to 180 days (or shipped back), importer pays."
+     ],
+     "earlyArrival": "Arriving before the 180 days are up: detention for the remaining days (not counting arrival and release days). No medical exceptions.",
+     "antibodyExpired": "New draw at a designated lab before the 2-year validity ends; no new waiting period if the vaccine chain is unbroken."
+    },
+    "importFromDesignatedRegions": {
+     "regions": [
+      "Iceland",
+      "Australia",
+      "New Zealand",
+      "Fiji Islands",
+      "Hawaii",
+      "Guam"
+     ],
+     "rule": "Microchip, residence (since birth / 180+ days immediately before export / since coming directly from Japan; otherwise detention for 180 minus days resident), 40-day notice, clinical inspection within 10 days before boarding, Form AB, direct transport or seal / ANNEX. No vaccine, antibody test or 180-day wait."
+    },
+    "exportFromJapan": {
+     "rule": "Apply for export inspection to AQS at least 14 days before export (NACCS or email; up to 3 preferred times in remarks); inspection within 10 days before departure unless the destination says otherwise. Check the destination's entry rules with its embassy.",
+     "from2027": "Dogs and rabbits exported on or after 2027-01-01: the 14-day application is mandatory (家畜伝染病予防法施行規則 amendment). Rabbits imported as cargo from 2027-01-01: 40-day import notification mandatory."
+    },
+    "shortStayAbroad": {
+     "rule": "Leaving Japan and coming back: do microchip, 2 rabies shots and the antibody test (≥0.5 IU/ml) in Japan before departure → no 180-day wait abroad, ≤12 h quarantine on return within 2 years of the draw (boosters abroad on time; redraw abroad if the 2 years run out). 40-day notice before return and a vet check within 10 days before boarding abroad still apply."
+    },
+    "dogPorts": {
+     "airports": [
+      "New Chitose",
+      "Narita",
+      "Haneda (Tokyo Intl.)",
+      "Chubu",
+      "Kansai",
+      "Itami (Osaka Intl.)",
+      "Kobe",
+      "Kitakyushu",
+      "Fukuoka",
+      "Kagoshima",
+      "Naha"
+     ],
+     "seaports": [
+      "Tomakomai",
+      "Keihin (Tokyo, Kawasaki, Yokohama)",
+      "Nagoya",
+      "Hanshin (Osaka, Kobe)",
+      "Kanmon",
+      "Hakata",
+      "Kagoshima",
+      "Naha"
+     ]
+    },
+    "afterImport": "Dogs: register with the city within 30 days of import with the import quarantine certificate; yearly rabies shot. Keep the certificate (no reissue; needed to export).",
+    "sources": [
+     "https://www.maff.go.jp/aqs/english/animal/dog/import-other.html",
+     "https://www.maff.go.jp/aqs/english/animal/dog/import-free.html",
+     "https://www.maff.go.jp/aqs/english/animal/dog/export.html",
+     "https://www.maff.go.jp/aqs/animal/dog/shortstay.html",
+     "https://www.maff.go.jp/aqs/animal/index.html",
+     "https://www.maff.go.jp/aqs/english/qanda/dogcata.html",
+     "https://www.maff.go.jp/aqs/animal/dog/lab.html",
+     "https://laws.e-gov.go.jp/law/411M50000200068"
+    ],
+    "disclaimer": "Educational date calculator, not veterinary or legal advice, not affiliated with MAFF or the Animal Quarantine Service (AQS, 動物検疫所). It applies AQS guidance (rules as of 2026-10-31) to the dates you enter. AQS decides on your documents; airlines and the destination country add their own rules. Confirm with the AQS office at your port before booking.",
+    "docs": "https://japan-pet-quarantine.vercel.app/openapi.json",
+    "checker": "https://japan-pet-quarantine.vercel.app/api/check"
    }
   },
   {

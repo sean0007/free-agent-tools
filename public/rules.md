@@ -1,6 +1,6 @@
 # Japan rules index
 
-Generated 2026-10-31T09:08+09:00 from each tool's live `/api/rules`. Machine-readable: [/rules.json](https://free-agent-tools.vercel.app/rules.json).
+Generated 2026-10-31T12:44+09:00 from each tool's live `/api/rules`. Machine-readable: [/rules.json](https://free-agent-tools.vercel.app/rules.json).
 
 Educational summaries, not legal, tax or immigration advice. Rules change; confirm with the official source linked for each rule before relying on it.
 
@@ -17,6 +17,7 @@ Educational summaries, not legal, tax or immigration advice. Rules change; confi
 | [Japan My Number Card Check](https://japan-mynumber-card-check.vercel.app) | 2026-10-29 | – | [japan-mynumber-card-check/api/rules](https://japan-mynumber-card-check.vercel.app/api/rules) | 9 |
 | [Japan Overseas Dependents Check](https://japan-overseas-dependents.vercel.app) | 2026-10-25 | – | [japan-overseas-dependents/api/rules](https://japan-overseas-dependents.vercel.app/api/rules) | 7 |
 | [Japan Part-time Work Check](https://japan-parttime-check.vercel.app) | 2026-10-26 | 2026-10-01 | [japan-parttime-check/api/rules](https://japan-parttime-check.vercel.app/api/rules) | 9 |
+| [Japan Pet Quarantine Check](https://japan-pet-quarantine.vercel.app) | 2026-10-31 | – | [japan-pet-quarantine/api/rules](https://japan-pet-quarantine.vercel.app/api/rules) | 8 |
 | [Japan PR Guideline Check](https://japan-pr-check.vercel.app) | 2026-10-18 | – | [japan-pr-check/api/rules](https://japan-pr-check.vercel.app/api/rules) | 6 |
 | [Japan Re-entry Deadline Check](https://japan-reentry-check.vercel.app) | 2026-10-24 | – | [japan-reentry-check/api/rules](https://japan-reentry-check.vercel.app/api/rules) | 5 |
 | [Japan Tax-Free Refund Checker](https://japan-tax-free-refund.vercel.app) | 2026-10-09 | – | [japan-tax-free-refund/api/rules](https://japan-tax-free-refund.vercel.app/api/rules) | 8 |
@@ -173,6 +174,16 @@ Educational summaries, not legal, tax or immigration advice. Rules change; confi
 - https://www.moj.go.jp/isa/applications/procedures/shikakugai_00001.html
 - https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/jigyounushi/seido/anteikyoku/gairou/980908gai01.htm
 - https://www.studyinjapan.go.jp/en/work-in-japan/part-time-jobs/
+
+### Japan Pet Quarantine Check
+- https://www.maff.go.jp/aqs/english/animal/dog/import-other.html
+- https://www.maff.go.jp/aqs/english/animal/dog/import-free.html
+- https://www.maff.go.jp/aqs/english/animal/dog/export.html
+- https://www.maff.go.jp/aqs/animal/dog/shortstay.html
+- https://www.maff.go.jp/aqs/animal/index.html
+- https://www.maff.go.jp/aqs/english/qanda/dogcata.html
+- https://www.maff.go.jp/aqs/animal/dog/lab.html
+- https://laws.e-gov.go.jp/law/411M50000200068
 
 ### Japan PR Guideline Check
 - https://www.moj.go.jp/isa/10_00279.html

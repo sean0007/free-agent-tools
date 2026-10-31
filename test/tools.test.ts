@@ -152,10 +152,7 @@ test("japan_my_number_card_expiry_check on the mynumber site", async () => {
   assert.equal(t.inputSchema.safeParse({ holder: "japanese", birthDate: "April 1992", cardIssueDate: "2024-03-01" }).success, false);
 });
 
-test("34 tools, v1.18.0, japan_hsp_points_check on the hsp site", async () => {
-  assert.equal(TOOLS.length, 34);
-  const { readFileSync } = await import("node:fs");
-  for (const f of ["package.json", "server.json", "public/server.json"]) assert.equal(JSON.parse(readFileSync(f, "utf8")).version, "1.18.0", f);
+test("japan_hsp_points_check on the hsp site", async () => {
   const t = TOOLS.find((x) => x.name === "japan_hsp_points_check");
   assert.ok(t);
   assert.equal(SITES[t.site].url, "https://japan-hsp-points.vercel.app");
@@ -166,4 +163,20 @@ test("34 tools, v1.18.0, japan_hsp_points_check on the hsp site", async () => {
   assert.equal(t.inputSchema.safeParse({ category: "engineer", education: "master" }).success, false);
   assert.equal(t.inputSchema.safeParse({ category: "specialized", education: "phd" }).success, false);
   assert.equal(t.inputSchema.safeParse({ category: "specialized", education: "master", birthDate: "1990/01/01" }).success, false);
+});
+
+test("35 tools, v1.19.0, japan_pet_quarantine_check on the pet site", async () => {
+  assert.equal(TOOLS.length, 35);
+  const { readFileSync } = await import("node:fs");
+  for (const f of ["package.json", "server.json", "public/server.json"]) assert.equal(JSON.parse(readFileSync(f, "utf8")).version, "1.19.0", f);
+  const t = TOOLS.find((x) => x.name === "japan_pet_quarantine_check");
+  assert.ok(t);
+  assert.equal(SITES[t.site].url, "https://japan-pet-quarantine.vercel.app");
+  assert.equal(t.path, "/api/check");
+  assert.equal(t.inputSchema.safeParse(t.example).success, true);
+  assert.equal(t.inputSchema.safeParse({ direction: "export", species: "dog", departureDate: "2027-01-10" }).success, true);
+  assert.equal(t.inputSchema.safeParse({ direction: "import", species: "cat", country: "Hawaii", residentSinceBirth: true, arrivalDate: "2027-01-15" }).success, true);
+  assert.equal(t.inputSchema.safeParse({ direction: "fly", species: "dog" }).success, false);
+  assert.equal(t.inputSchema.safeParse({ direction: "import", species: "hamster" }).success, false);
+  assert.equal(t.inputSchema.safeParse({ direction: "import", species: "dog", arrivalDate: "15/06/2027" }).success, false);
 });
