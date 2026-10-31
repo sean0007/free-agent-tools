@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 export const metadata: Metadata = { title: "Thanks: vote counted", robots: { index: false, follow: false } };
@@ -27,7 +28,7 @@ export default async function Yes({ params }: { params: Promise<{ pick: string }
         pick it, it gets built, and it will be announced on the home page and in the GitHub repo.
       </p>
       <p>
-        <a href="/pro">Back to Pro options</a> · <a href="/">Free Agent Tools</a> ·{" "}
+        <a href="/pro">Back to Pro options</a> · <Link href="/" prefetch={false}>Free Agent Tools</Link> ·{" "}
         <a href="https://github.com/sean0007/free-agent-tools">Watch the repo for news</a>
       </p>
     </main>

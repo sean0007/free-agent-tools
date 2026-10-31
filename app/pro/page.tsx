@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { MCP_URL, SERVER_URL, TOOLS } from "@/lib/tools";
 
 export const metadata: Metadata = {
@@ -53,7 +54,7 @@ export default function Pro() {
         </div>
       ))}
       <footer>
-        <a href="/">Back to Free Agent Tools</a> · Results from every tool are rules of thumb and educational estimates, not legal,
+        <Link href="/" prefetch={false}>Back to Free Agent Tools</Link> · Results from every tool are rules of thumb and educational estimates, not legal,
         tax, or immigration advice.
       </footer>
     </main>
